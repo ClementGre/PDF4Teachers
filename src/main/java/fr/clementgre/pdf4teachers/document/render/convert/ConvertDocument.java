@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -52,7 +52,7 @@ public class ConvertDocument {
                 
                 if(MainWindow.mainScreen.hasDocument(false)){
                     if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.file.getAbsolutePath())){
-                        if(!MainWindow.mainScreen.closeFile(true, false)) continue;
+                        if(!MainWindow.mainScreen.closeFile(true, false, true)) continue;
                     }
                 }
                 
@@ -64,7 +64,7 @@ public class ConvertDocument {
                 }
                 
                 
-                MainWindow.filesTab.openFiles(new File[]{file.file});
+                MainWindow.filesTab.openFiles(new File[]{file.file}, true);
                 converted++;
             }
             

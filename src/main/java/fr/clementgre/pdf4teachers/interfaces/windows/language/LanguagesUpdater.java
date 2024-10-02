@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -297,7 +297,7 @@ public class LanguagesUpdater {
                     if(MainWindow.mainScreen.hasDocument(false)){
                         if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(target.getAbsolutePath())){
                             closed = MainWindow.mainScreen.document.getFile();
-                            Platform.runLater(() -> MainWindow.mainScreen.closeFile(false, false));
+                            Platform.runLater(() -> MainWindow.mainScreen.closeFile(false, false, false));
                             Thread.sleep(500);
                         }
                     }

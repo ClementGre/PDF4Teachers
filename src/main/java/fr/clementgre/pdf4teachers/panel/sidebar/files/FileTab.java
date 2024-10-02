@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -44,10 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FileTab extends SideTab {
@@ -65,8 +62,6 @@ public class FileTab extends SideTab {
         super("files", SVGPathIcons.PDF_FILE, 28, 400/500d);
         setContent(pane);
         setup();
-        
-        
     }
     
     public void setup(){
@@ -74,53 +69,19 @@ public class FileTab extends SideTab {
         files.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         files.addEventFilter(MouseEvent.MOUSE_PRESSED, Event::consume);
         
-        getContent().setOnDragDropped((DragEvent e) -> {
-            Dragboard db = e.getDragboard();
-            if(db.hasFiles()){
-                // We need only one good file to accept all. We will do the sorting after.
-                for(File file : db.getFiles()){
-                    if(isFilePdf(file) || file.isDirectory()){
-                        File[] files = db.getFiles().toArray(new File[0]);
-                        openFiles(files);
-                        if(files.length == 1 && isFilePdf(file)) MainWindow.mainScreen.openFile(file);
-                        e.setDropCompleted(true);
-                        e.consume();
-                        break;
-                    }
-                }
-                // Test for conversion
-                ArrayList<File> toConvertFiles = db.getFiles()
-                        .stream()
-                        .filter(ConvertRenderer::isGoodFormat)
-                        .collect(Collectors.toCollection(ArrayList::new));
-                if(!toConvertFiles.isEmpty()){
-                    
-                    ConvertDocument converter = new ConvertDocument();
-                    converter.convertWindow.root.getSelectionModel().select(1);
-                    Platform.runLater(() -> {
-                        for(File file : toConvertFiles){
-                            converter.convertWindow.convertFiles.srcFiles.appendText(file.getAbsolutePath() + "\n");
-                        }
-                    });
-                    
-                    e.setDropCompleted(true);
-                    e.consume();
-                }
-                e.consume();
-            }
-        });
+        getContent().setOnDragDropped((e) -> onDragDrop(e, false));
         
         sortManager = new SortManager((sortType, order) -> {
             if(sortType.equals(TR.tr("sorting.sortType.name"))){
-                List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+                List<File> toSort = new ArrayList<>(files.getItems());
                 files.getItems().clear();
                 files.getItems().addAll(Sorter.sortFilesByName(toSort, order));
             }else if(sortType.equals(TR.tr("sorting.sortType.folder"))){
-                List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+                List<File> toSort = new ArrayList<>(files.getItems());
                 files.getItems().clear();
                 files.getItems().addAll(Sorter.sortFilesByDir(toSort, order));
             }else if(sortType.equals(TR.tr("sorting.sortType.edit"))){
-                List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+                List<File> toSort = new ArrayList<>(files.getItems());
                 files.getItems().clear();
                 files.getItems().addAll(Sorter.sortFilesByEdit(toSort, order));
             }else if(sortType.equals(TR.tr("sorting.sortType.addDate"))){
@@ -165,6 +126,52 @@ public class FileTab extends SideTab {
         
         pane.getChildren().addAll(options, info, files);
         
+    }
+    
+    public boolean isValidDragFile(DragEvent e, boolean acceptImages){
+        Dragboard db = e.getDragboard();
+        return db.hasFiles() && db.getFiles().stream().anyMatch(f -> isFilePdf(f) || f.isDirectory() || (acceptImages && ConvertRenderer.isGoodFormat(f)));
+    }
+    
+    public void onDragDrop(DragEvent e, boolean openFirstFile){
+        Dragboard db = e.getDragboard();
+        if(db.hasFiles()){
+            
+            // Find at least one valid file
+            Optional<File> firstValidFile = db.getFiles().stream().filter(f -> isFilePdf(f) || f.isDirectory()).findFirst();
+            Optional<File> firstValidPdfFile = db.getFiles().stream().filter(FileTab::isFilePdf).findFirst();
+            firstValidFile.ifPresent(file -> {
+                ArrayList<File> files = new ArrayList<>(db.getFiles());
+                openFiles(files, false);
+                
+                firstValidPdfFile.ifPresent(pdfFile -> {
+                    if(openFirstFile || files.size() == 1){
+                        MainWindow.mainScreen.openFile(pdfFile);
+                    }
+                    if(files.size() > 1) SideBar.selectTab(MainWindow.filesTab);
+                });
+                e.setDropCompleted(true);
+                e.consume();
+            });
+            
+            // Open convert dialog for images
+            ArrayList<File> toConvertFiles = db.getFiles()
+                    .stream()
+                    .filter(ConvertRenderer::isGoodFormat)
+                    .collect(Collectors.toCollection(ArrayList::new));
+            
+            if(!toConvertFiles.isEmpty()){
+                ConvertDocument converter = new ConvertDocument();
+                converter.convertWindow.root.getSelectionModel().select(1);
+                Platform.runLater(() -> {
+                    for(File file : toConvertFiles){
+                        converter.convertWindow.convertFiles.srcFiles.appendText(file.getAbsolutePath() + "\n");
+                    }
+                });
+                e.setDropCompleted(true);
+                e.consume();
+            }
+        }
     }
     
     public class DirOpener {
@@ -223,18 +230,18 @@ public class FileTab extends SideTab {
         }
     }
     
-    public void openFiles(File[] files){
+    public void openFiles(File[] files, boolean selectTab){
         for(File file : files){
             openFile(file);
         }
-        if(files.length != 0) SideBar.selectTab(this);
+        if(selectTab && files.length != 0) SideBar.selectTab(this);
     }
     
-    public void openFiles(List<File> files){
+    public void openFiles(List<File> files, boolean selectTab){
         for(File file : files){
             openFile(file);
         }
-        if(!files.isEmpty()) SideBar.selectTab(this);
+        if(selectTab && !files.isEmpty()) SideBar.selectTab(this);
     }
     
     public void clearFiles(){
@@ -355,7 +362,7 @@ public class FileTab extends SideTab {
                     boolean documentOpen = MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath());
                     if(documentOpen){
                         PDFPagesRender renderer = MainWindow.mainScreen.document.pdfPagesRender;
-                        if(!MainWindow.mainScreen.closeFile(true, false)) return; // Close file cancelled.
+                        if(!MainWindow.mainScreen.closeFile(true, false, true)) return; // Close file cancelled.
                         while(!renderer.isClosed()){
                             PlatformUtils.sleepThread(100);
                         }

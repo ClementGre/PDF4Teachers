@@ -153,7 +153,7 @@ public class SplitEngine {
         }
         
         Platform.runLater(() -> {
-            MainWindow.filesTab.openFiles(new File[]{exportPart.output});
+            MainWindow.filesTab.openFiles(new File[]{exportPart.output}, true);
         });
     }
     

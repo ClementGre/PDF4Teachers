@@ -256,14 +256,18 @@ public class PageRenderer extends Pane {
                     }
                 }
             }else if(dragboard.hasFiles()){ // Image/SVG drag'n drop
+                if(MainWindow.filesTab.isValidDragFile(e, false))
+                    return; // If contains PDF files let the FilesTab handle it
+                
                 for(File file : dragboard.getFiles()){
                     if(GalleryManager.isAcceptableImage(file.getName())){
                         e.acceptTransferModes(TransferMode.COPY);
+                        e.consume();
                     }else if(FilesUtils.getExtension(file.getName()).equalsIgnoreCase("svg")){
                         e.acceptTransferModes(TransferMode.COPY);
+                        e.consume();
                     }
                 }
-                e.consume();
             }
         });
         setOnDragExited(e -> {
@@ -305,6 +309,9 @@ public class PageRenderer extends Pane {
                 PaintTab.draggingItem = null;
                 PaintTab.draggingElement = null;
             }else if(dragboard.hasFiles()){ // Image/SVG drag'n drop
+                if(MainWindow.filesTab.isValidDragFile(e, false))
+                    return; // If contains PDF files let the FilesTab handle it
+                
                 for(File file : dragboard.getFiles()){
                     MainWindow.mainScreen.setSelected(null);
                     GraphicElement element = null;

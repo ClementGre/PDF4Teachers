@@ -53,9 +53,9 @@ public class Main extends Application {
     /********** Version parameters **********/
     public enum Mode {DEV, SNAPSHOT, PRE_RELEASE, RELEASE}
     
-    public static final Mode mode = Mode.RELEASE;
-    public static final int VERSION_ID = VersionIds.RL_1_4_2;
-    public static final String VERSION = getVersionName("1.4.2", 1);
+    public static final Mode mode = Mode.DEV;
+    public static final int VERSION_ID = VersionIds.SN1_1_4_3;
+    public static final String VERSION = getVersionName("1.4.3", 1);
     public static LogLevel logLevel = getLogLevel();
     /****************************************/
     

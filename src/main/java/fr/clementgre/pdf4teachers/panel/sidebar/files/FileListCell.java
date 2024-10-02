@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -209,7 +209,7 @@ public class FileListCell extends ListCell<File> {
                 if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteDocument.header", file.getName())).execute()){
                     if(MainWindow.mainScreen.hasDocument(false)){
                         if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                            MainWindow.mainScreen.closeFile(false, false);
+                            MainWindow.mainScreen.closeFile(false, false, true);
                         }
                     }
                     MainWindow.filesTab.removeFile(file);

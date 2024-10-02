@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -109,7 +109,7 @@ public class MainWindow extends Stage {
         Log.i("Received close request");
     
         userData.save();
-        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false)) return false;
+        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false, false)) return false;
         
         // At this point, it is sure the app will close.
         LockManager.onCloseApp();
@@ -233,7 +233,7 @@ public class MainWindow extends Stage {
                 && mainScreen.hasDocument(false)
                 && mainScreen.document.getFile().getAbsolutePath().equals(docFileAbsolutePath);
         
-        if(MainWindow.mainScreen.closeFile(true, false)){
+        if(MainWindow.mainScreen.closeFile(true, false, false)){
             if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
             Main.params = new ArrayList<>();
             TR.updateLocale();

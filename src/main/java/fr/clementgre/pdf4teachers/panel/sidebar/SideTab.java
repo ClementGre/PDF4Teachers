@@ -1,14 +1,12 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.panel.sidebar;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.panel.sidebar.files.FileTab;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
@@ -19,8 +17,6 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
-
-import java.io.File;
 
 public class SideTab extends Tab {
     
@@ -39,21 +35,12 @@ public class SideTab extends Tab {
             }
             
             getContent().setOnDragOver((DragEvent e) -> {
-                Dragboard db = e.getDragboard();
-                if(db.hasFiles()){
-                    for(File file : db.getFiles()){
-                        if(FileTab.isFilePdf(file) || file.isDirectory() || ConvertRenderer.isGoodFormat(file)){
-                            if(this instanceof FileTab){ // Accept
-                                e.acceptTransferModes(TransferMode.ANY);
-                            }else if(getTabPane().getTabs().contains(MainWindow.filesTab)){ // Select good tab
-                                SideBar.selectTab(MainWindow.filesTab);
-                                e.acceptTransferModes(TransferMode.ANY);
-                            }
-                            e.consume();
-                            return;
-                        }
+                if(MainWindow.filesTab.isValidDragFile(e, true)){
+                    if(getTabPane().getTabs().contains(MainWindow.filesTab)){ // Select files tab
+                        SideBar.selectTab(MainWindow.filesTab);
+                        e.acceptTransferModes(TransferMode.ANY);
+                        e.consume();
                     }
-                    e.consume();
                 }
             });
         });

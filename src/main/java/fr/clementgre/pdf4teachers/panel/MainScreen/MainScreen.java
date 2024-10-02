@@ -41,10 +41,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.ZoomEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -194,9 +191,7 @@ public class MainScreen extends Pane {
     
     public void setup(){
         
-        
         setBorder(Border.EMPTY);
-        
         isGridView.bind(isMultiPagesMode.or(isEditPagesMode));
         
         // Pages Shadow
@@ -423,7 +418,15 @@ public class MainScreen extends Pane {
             mouseY = e.getY();
             mouseX = e.getX();
         });
+        
         setOnDragOver(e -> {
+            if(MainWindow.filesTab.isValidDragFile(e, true)){
+                e.acceptTransferModes(TransferMode.ANY);
+                e.consume();
+                return;
+            }
+            
+            // DragNScroll for elements
             if(e.isAccepted()){
                 double y = Math.max(1, Math.min(getHeight(), e.getY()));
                 if(y < 50){
@@ -453,6 +456,8 @@ public class MainScreen extends Pane {
             dragNScrollFactorVertical = 0;
             dragNScrollFactorHorizontal = 0;
         });
+        setOnDragDropped((e) -> MainWindow.filesTab.onDragDrop(e, true));
+        
         setOnMousePressed(e -> {
             requestFocus();
             initDragOrigin(e);
@@ -546,7 +551,7 @@ public class MainScreen extends Pane {
         
         boolean hadOpenedFile = status.get() == Status.OPEN;
         double oldPaneScale = zoomOperator.getPaneScale();
-        if(!closeFile(!Main.settings.autoSave.getValue(), false)){
+        if(!closeFile(!Main.settings.autoSave.getValue(), false, false)){
             return;
         }
         
@@ -578,7 +583,7 @@ public class MainScreen extends Pane {
                 document.loadEdition(!resetScrollValue);
             }catch(Exception e){
                 Log.eNotified(e, "Unable to load the edit file.");
-                closeFile(false, true);
+                closeFile(false, true, true);
                 
                 failedEditFile = Edition.getEditFile(file).getAbsolutePath();
                 status.set(Status.ERROR_EDITION);
@@ -612,7 +617,7 @@ public class MainScreen extends Pane {
     }
     
     public boolean openFiles(List<File> toOpenFiles, boolean openDocument){
-        MainWindow.filesTab.openFiles(toOpenFiles);
+        MainWindow.filesTab.openFiles(toOpenFiles, true);
         if(openDocument && toOpenFiles.size() == 1){
             if(FilesUtils.getExtension(toOpenFiles.getFirst().getName()).equalsIgnoreCase("pdf")){
                 Platform.runLater(() -> openFile(toOpenFiles.getFirst()));
@@ -629,7 +634,7 @@ public class MainScreen extends Pane {
         repaint();
     }
     
-    public boolean closeFile(boolean confirm, boolean forceNotToSave){
+    public boolean closeFile(boolean confirm, boolean forceNotToSave, boolean backToFilesTab){
         setSelected(null);
         
         if(document != null){
@@ -647,7 +652,7 @@ public class MainScreen extends Pane {
             document.stopDocumentSaver();
             document.close();
             document = null;
-            SideBar.selectTab(MainWindow.filesTab);
+            if(backToFilesTab) SideBar.selectTab(MainWindow.filesTab);
         }
         
         // No need to clear the pane, the PageRenderer are removing themselves in their remove() method.

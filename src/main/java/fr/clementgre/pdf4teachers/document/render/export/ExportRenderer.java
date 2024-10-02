@@ -44,7 +44,7 @@ public class ExportRenderer {
                 doc.setAllSecurityToBeRemoved(true);
             }catch(Exception e){
                 doc.close();
-                if(docOpened) MainWindow.mainScreen.closeFile(true, false);
+                if(docOpened) MainWindow.mainScreen.closeFile(true, false, true);
                 throw new Exception("The document is encrypted, and we can't decrypt it.", e);
             }
         }

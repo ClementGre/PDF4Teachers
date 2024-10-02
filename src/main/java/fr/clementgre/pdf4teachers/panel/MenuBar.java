@@ -43,8 +43,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.input.Clipboard;
@@ -52,11 +50,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -241,7 +236,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
             File[] files = FilesChooserManager.showPDFFilesDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR);
             if(files != null){
-                MainWindow.filesTab.openFiles(files);
+                MainWindow.filesTab.openFiles(files, true);
                 if(files.length == 1){
                     MainWindow.mainScreen.openFile(files[0]);
                 }
@@ -251,7 +246,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
             File directory = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR);
             if(directory != null){
-                MainWindow.filesTab.openFiles(new File[]{directory});
+                MainWindow.filesTab.openFiles(new File[]{directory}, true);
             }
         });
         file3Clear.setOnAction((ActionEvent actionEvent) -> {
@@ -274,7 +269,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
         file7Close.setOnAction((ActionEvent e) -> {
             if(MainWindow.mainScreen.hasDocument(true)){
-                MainWindow.mainScreen.closeFile(true, false);
+                MainWindow.mainScreen.closeFile(true, false, true);
             }
         });
         file8Export.setOnAction((ActionEvent actionEvent) -> {
