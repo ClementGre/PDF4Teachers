@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.scene.paint.Color;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSName;
@@ -28,16 +29,22 @@ import java.util.Calendar;
 public class ExportRenderer {
     
     public boolean exportFile(File pdfFile, File toFile, int imagesDPI, boolean textElements, boolean gradesElements, boolean drawElements, boolean skillElements) throws Exception{
-        
         File editFile = Edition.getEditFile(pdfFile);
         
-        PDDocument doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfFile));
+        PDDocument doc;
+        boolean docOpened = false;
+        if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getFile().equals(pdfFile)){
+            docOpened = true;
+            doc = MainWindow.mainScreen.document.pdfPagesRender.getDocument();
+            
+        }else doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfFile));
         
         if(doc.isEncrypted()){
             try{
                 doc.setAllSecurityToBeRemoved(true);
             }catch(Exception e){
                 doc.close();
+                if(docOpened) MainWindow.mainScreen.closeFile(true, false);
                 throw new Exception("The document is encrypted, and we can't decrypt it.", e);
             }
         }
@@ -119,7 +126,10 @@ public class ExportRenderer {
         }
         
         doc.save(toFile);
-        doc.close();
+        if(!docOpened) doc.close();
+        else{
+            MainWindow.mainScreen.document.updateBackgrounds();
+        }
         return true;
     }
     
