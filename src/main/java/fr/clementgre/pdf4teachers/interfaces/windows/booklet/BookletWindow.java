@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. Clément Grennerat
+ * Copyright (c) 2022-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -103,6 +103,7 @@ public class BookletWindow extends AlternativeWindow<VBox> {
                     close();
                 }catch(IOException ex){
                     Log.eAlerted(ex);
+                    MainWindow.mainScreen.document.pdfPagesRender.resumeRendering();
                 }finally{
                     Platform.runLater(MainWindow.mainScreen.getUndoEngine()::unlock);
                 }

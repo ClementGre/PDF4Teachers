@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. Clément Grennerat
+ * Copyright (c) 2022-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -67,6 +67,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
          */
         
         MainWindow.mainScreen.setSelected(null); // Text elements can't be font-edited if selected.
+        document.pdfPagesRender.pauseRendering();
         PDFPagesEditor editor = document.pdfPagesRender.editor;
         document.clearSelectedPages();
         
@@ -187,6 +188,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
     
         Edition.setUnsave("Assemble booklet");
         document.edition.save(false);
+        document.pdfPagesRender.resumeRendering();
     }
     
     private PDFormXObject generatePageForm(LayerUtility layerUtility, PDDocument doc, PDPage page, PDRectangle rotatedCB, double trx, double availableHeight) throws IOException{
@@ -252,7 +254,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
          */
     
         PDFPagesEditor editor = document.pdfPagesRender.editor;
-        editor.markAsEdited();
+        document.pdfPagesRender.pauseRendering();
         List<PageRenderer> savedSelectedPages = editor.saveSelectedPages();
     
         // Invert pages order if needed
@@ -272,9 +274,9 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             
             cropPage(oldPage, true);
             cropPage(page, false);
-    
-            PageRenderer pageRenderer = new PageRenderer(document.numberOfPages);
+            
             editor.getDocument().addPage(page);
+            PageRenderer pageRenderer = new PageRenderer(document.numberOfPages);
     
             // add page
             document.getPages().add(pageRenderer);
@@ -360,6 +362,6 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
     
         Edition.setUnsave("Disassemble booklet");
         document.edition.save(false);
-    
+        document.pdfPagesRender.resumeRendering();
     }
 }

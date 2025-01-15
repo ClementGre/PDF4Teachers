@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024. Clément Grennerat
+ * Copyright (c) 2022-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -14,10 +14,12 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
@@ -67,15 +69,29 @@ public class SplitEngine {
         
             @Override
             public Map.Entry<ExportPart, Integer> filterData(ExportPart exportPart, boolean recursive){
+                File output = exportPart.output;
                 
-                if(exportPart.output.exists()){ // Check Already Exist
+                // Check if the file is the current document
+                if(MainWindow.mainScreen.hasDocument(false)){
+                    if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(output.getAbsolutePath())){
+                        PlatformUtils.runAndWait(() ->
+                                new WrongAlert(TR.tr("dialog.error.unableToOverwriteCurrentFile.header"),
+                                        TR.tr("dialog.error.unableToOverwriteCurrentFile.content",
+                                                FilesUtils.getPathReplacingUserHome(output.getPath())),
+                                        false).showAndWait()
+                        );
+                        return Map.entry(exportPart, TwoStepListAction.CODE_SKIP_1); // SKIP for unknown reason
+                    }
+                }
+                
+                if(output.exists()){ // Check Already Exist
                     AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(exportPart.output);
                     if(result == AlreadyExistDialogManager.ResultType.SKIP)
-                        return Map.entry(exportPart, TwoStepListAction.CODE_SKIP_2); // SKIP
+                        return Map.entry(exportPart, TwoStepListAction.CODE_SKIP_2); // SKIP for overwrite reason
                     else if(result == AlreadyExistDialogManager.ResultType.STOP)
                         return Map.entry(exportPart, TwoStepListAction.CODE_STOP); // STOP
                     else if(result == AlreadyExistDialogManager.ResultType.RENAME)
-                        exportPart = new ExportPart(AlreadyExistDialogManager.rename(exportPart.output), exportPart.startIndex, exportPart.endIndex());
+                        exportPart = new ExportPart(AlreadyExistDialogManager.rename(output), exportPart.startIndex, exportPart.endIndex());
                 }
             
                 return Map.entry(exportPart, TwoStepListAction.CODE_OK);
@@ -126,6 +142,7 @@ public class SplitEngine {
     private record ExportPart(File output, int startIndex, int endIndex){}
     
     private void exportPart(ExportPart exportPart) throws IOException{
+        
         PDDocument extracted = MainWindow.mainScreen.document.pdfPagesRender.editor.extractPages(exportPart.startIndex, exportPart.endIndex);
         extracted.save(exportPart.output);
         extracted.close();

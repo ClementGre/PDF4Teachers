@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024. Clément Grennerat
+ * Copyright (c) 2020-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -72,33 +72,20 @@ import java.util.stream.Collectors;
 
 public class PDFPagesEditor {
     
-    private final PDDocument document;
-    private final File file;
+    private final PDFPagesRender renderer;
     private boolean edited;
     
-    public PDFPagesEditor(PDDocument document, File file){
-        this.document = document;
-        this.file = file;
+    public PDFPagesEditor(PDFPagesRender renderer){
+        this.renderer = renderer;
     }
     
     public void saveEditsIfNeeded(){
         if(edited) saveEdits();
     }
     public void saveEdits(){
-        try{
-            document.setAllSecurityToBeRemoved(true);
-            document.save(file);
-            edited = false;
-        }catch(IOException e){
-            Log.e(e);
-            ErrorAlert alert = new ErrorAlert(TR.tr("dialog.error.unableToSavePDFPagesEdits"), e.getMessage(), false);
-            alert.getButtonTypes().clear();
-            alert.addIgnoreButton(ButtonPosition.CLOSE);
-            alert.addDefaultButton(TR.tr("actions.retry"));
-            
-            if(alert.getShowAndWaitIsDefaultButton()) saveEdits();
-            else edited = false;
-        }
+        getDocument().setAllSecurityToBeRemoved(true);
+        renderer.saveDocumentTo(renderer.getFile());
+        edited = false;
     }
     
     // ascendPage and descendPage are registering an UndoAction,
@@ -127,7 +114,7 @@ public class PDFPagesEditor {
     public void rotatePage(PageRenderer page, boolean right, UType uType, boolean animated){
         int angle = right ? 90 : -90;
         page.quitVectorEditMode();
-        document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + angle);
+        getDocument().getPage(page.getPage()).setRotation(getDocument().getPage(page.getPage()).getRotation() + angle);
         edited = true;
         
         MainWindow.mainScreen.registerNewAction(new PageRotateUndoAction(uType, page, right));
@@ -172,9 +159,9 @@ public class PDFPagesEditor {
         List<PageRenderer> savedSelectedPages = saveSelectedPages();
         
         page.quitVectorEditMode();
-        PDPage docPage = document.getPage(page.getPage());
+        PDPage docPage = getDocument().getPage(page.getPage());
         
-        document.removePage(docPage);
+        getDocument().removePage(docPage);
         addDocumentPage(index, docPage);
         
         Document document = MainWindow.mainScreen.document;
@@ -202,7 +189,7 @@ public class PDFPagesEditor {
         if(MainWindow.mainScreen.document.save(true) && Edition.isSave()){
             
             List<PageRenderer> savedSelectedPages = saveSelectedPages();
-            MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, page.getPage(), page, document.getPage(page.getPage()), true));
+            MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, page.getPage(), page, getDocument().getPage(page.getPage()), true));
             
             deletePageUtil(page);
             restoreSelectedPages(savedSelectedPages);
@@ -211,7 +198,7 @@ public class PDFPagesEditor {
     public void deletePageUtil(PageRenderer page){
         
         page.quitVectorEditMode();
-        document.removePage(page.getPage());
+        getDocument().removePage(page.getPage());
         edited = true;
         
         int pageNumber = page.getPage();
@@ -257,9 +244,11 @@ public class PDFPagesEditor {
                 if(MainWindow.mainScreen.document.getPages().size() == 1) return;
                 
                 if(i == 0)
-                    MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, page.getPage(), page, document.getPage(page.getPage()), true));
+                    MainWindow.mainScreen.registerNewAction(
+                            new PageAddRemoveUndoAction(UType.PAGE, page.getPage(), page, getDocument().getPage(page.getPage()), true));
                 else
-                    MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, page.getPage(), page, document.getPage(page.getPage()), true));
+                    MainWindow.mainScreen.registerNewAction(
+                            new PageAddRemoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, page.getPage(), page, getDocument().getPage(page.getPage()), true));
                 i++;
                 
                 page.quitVectorEditMode();
@@ -338,7 +327,7 @@ public class PDFPagesEditor {
         
         int addedPages = toAddDoc.getNumberOfPages();
         try{
-            merger.appendDocument(this.document, toAddDoc);
+            merger.appendDocument(getDocument(), toAddDoc);
             merger.mergeDocuments(RandomAccessStreamCacheImpl::new);
         }catch(IOException e){
             Log.eNotified(e);
@@ -349,7 +338,7 @@ public class PDFPagesEditor {
         for(int j = 0; j < addedPages; j++){
             PageRenderer page = new PageRenderer(index);
             
-            moveDocumentPage(this.document.getNumberOfPages() - 1, index);
+            moveDocumentPage(getDocument().getNumberOfPages() - 1, index);
             
             // add page
             document.getPages().add(index, page);
@@ -360,11 +349,11 @@ public class PDFPagesEditor {
             for(int k = 0; k < document.numberOfPages; k++) document.getPage(k).setPage(k);
         }
         
-        MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, index, null, this.document.getPage(index), false));
+        MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, index, null, getDocument().getPage(index), false));
         document.addSelectedPage(index);
         // For each page, the index is the same because when undoing, each page will be removed with the same index.
         for(int j = index + 1; j < index + addedPages; j++){
-            MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, index, null, this.document.getPage(j), false));
+            MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, index, null, getDocument().getPage(j), false));
             document.addSelectedPage(j);
         }
         
@@ -383,7 +372,7 @@ public class PDFPagesEditor {
     }
     public boolean setPageMargin(int pageNumber, float marginTop, float marginRight, float marginBottom, float marginLeft,
                               boolean updateUI, boolean absolute, UType uType){
-        PDPage page = this.document.getPage(pageNumber);
+        PDPage page = getDocument().getPage(pageNumber);
         PDRectangle oldMediaBox = page.getCropBox();
         PDRectangle oldCropBox = page.getCropBox();
         int rotation = page.getRotation();
@@ -484,8 +473,8 @@ public class PDFPagesEditor {
         return true;
     }
     public void setPageCropBoxAllowingMargin(int pageNumber, PDRectangle box, boolean updateUI){
-        PDRectangle mediaBox = this.document.getPage(pageNumber).getMediaBox();
-        PDPage page = this.document.getPage(pageNumber);
+        PDRectangle mediaBox = getDocument().getPage(pageNumber).getMediaBox();
+        PDPage page = getDocument().getPage(pageNumber);
         
         PDRectangle newMediaBox = correctMediaBoxForCropBox(box, mediaBox);
         
@@ -516,7 +505,7 @@ public class PDFPagesEditor {
         MainWindow.mainScreen.document.updateSelectedPages();
     }
     public void addDocumentPage(final int index, final PDPage page){
-        
+        PDDocument document = getDocument();
         if(index >= document.getNumberOfPages())
             document.addPage(page);
         else{
@@ -537,7 +526,7 @@ public class PDFPagesEditor {
     }
     
     private void moveDocumentPage(final int from, final int to){
-        
+        PDDocument document = getDocument();
         ArrayList<PDPage> pages = new ArrayList<>();
         
         // save non-from pages
@@ -559,7 +548,7 @@ public class PDFPagesEditor {
         Splitter splitter = new Splitter();
         
         PDDocument output = null;
-        List<PDDocument> documents = splitter.split(document);
+        List<PDDocument> documents = splitter.split(getDocument());
         
         PDFMergerUtility merger = new PDFMergerUtility();
         
@@ -575,7 +564,7 @@ public class PDFPagesEditor {
         return output;
     }
     public PDDocument extractPages(int startIndex, int endIndex) throws IOException{
-        return new PageExtractor(document, startIndex + 1, endIndex + 1).extract();
+        return new PageExtractor(getDocument(), startIndex + 1, endIndex + 1).extract();
     }
     
     // OTHER
@@ -794,7 +783,7 @@ public class PDFPagesEditor {
     
     public int clampAddPageIndex(int index){
         if(index < 0) return 0;
-        return Math.min(index, document.getNumberOfPages());
+        return Math.min(index, getDocument().getNumberOfPages());
     }
     
     public boolean isEdited(){
@@ -804,6 +793,7 @@ public class PDFPagesEditor {
         edited = true;
     }
     public PDDocument getDocument(){
-        return document;
+        return renderer.getDocument();
     }
+    
 }

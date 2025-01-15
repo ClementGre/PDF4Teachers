@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -36,7 +36,6 @@ public class ExportRenderer {
         if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getFile().equals(pdfFile)){
             docOpened = true;
             doc = MainWindow.mainScreen.document.pdfPagesRender.getDocument();
-            
         }else doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfFile));
         
         if(doc.isEncrypted()){
@@ -125,9 +124,12 @@ public class ExportRenderer {
             contentStream.close();
         }
         
-        doc.save(toFile);
-        if(!docOpened) doc.close();
-        else{
+        
+        if(!docOpened){
+            doc.save(toFile);
+            doc.close();
+        }else{
+            MainWindow.mainScreen.document.pdfPagesRender.saveDocumentTo(toFile);
             MainWindow.mainScreen.document.updateBackgrounds();
         }
         return true;

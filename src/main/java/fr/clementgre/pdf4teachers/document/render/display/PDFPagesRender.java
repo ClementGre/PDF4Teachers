@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -10,6 +10,8 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -27,6 +29,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 public class PDFPagesRender {
@@ -41,35 +44,74 @@ public class PDFPagesRender {
     private final ArrayList<RenderPending> rendersPending = new ArrayList<>();
     
     public boolean advertisement;
+    private boolean pauseRendering;
+    private boolean pauseRenderingInner;
     private boolean shouldClose;
     private boolean isClosed;
     
     public PDFPagesRender(File file) throws IOException {
         this.file = file;
         
-        document = Loader.loadPDF(new RandomAccessReadBufferedFile(file));
-        
-        pdfRenderer = new PDFRenderer(document);
-        editor = new PDFPagesEditor(document, file);
-        
+        loadDocument();
+        editor = new PDFPagesEditor(this);
         setupThread();
     }
-    private void setupThread(){
-        
-        new Thread(() -> {
+    private void loadDocument() throws IOException{
+        Log.d("Loading PDF Document at path " + file.toPath());
+        document = Loader.loadPDF(new RandomAccessReadBufferedFile(file));
+        pdfRenderer = new PDFRenderer(document);
+        resumeRendering();
+        pauseRenderingInner = false;
+    }
+    /**
+     * Since PDFBox v3.0, it is unsafe to overwrite a file directly using document.save(file).
+     * This method saves the document to a temporary file, replaces the original file with the temporary file, and reopens the document.
+     *
+     * @param file The file to save the document to
+     * @return True if the document was saved successfully, false if an error occurred
+     */
+    public boolean saveDocumentTo(File file){
+        try{
+            pauseRenderingInner = true;
+            Log.i("Saving document to file " + file.toPath() + " using temporary file.");
             
+            File tempFile = File.createTempFile("tempFile", ".pdf");
+            document.save(tempFile);
+            document.close();
+            
+            Files.move(tempFile.toPath(), file.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            
+            loadDocument();
+        }catch(IOException e){
+            Log.e(e);
+            ErrorAlert alert = new ErrorAlert(TR.tr("dialog.error.unableToSavePDFPagesEdits"), e.getMessage(), false);
+            alert.getButtonTypes().clear();
+            alert.addIgnoreButton(ButtonPosition.CLOSE);
+            alert.addDefaultButton(TR.tr("actions.retry"));
+            
+            if(alert.getShowAndWaitIsDefaultButton()) return saveDocumentTo(file);
+            
+            MainWindow.mainScreen.closeFile(false, false, true);
+            return false;
+        }
+        return true;
+    }
+    private void setupThread(){
+        new Thread(() -> {
             while(!shouldClose){ // not closed
-                
-                if(!rendersPending.isEmpty() && !rendersPending.getFirst().page.isRemoved()){ // Render
-                    renderPage(rendersPending.getFirst());
+                if(!pauseRendering && !pauseRenderingInner && !rendersPending.isEmpty() && !rendersPending.getFirst().page.isRemoved()){ // Render
+                    if(rendersPending.getFirst().page.getPage() < getNumberOfPages()){
+                        renderPage(rendersPending.getFirst());
+                    }else
+                        Log.w("Unable to render page " + rendersPending.getFirst().page.getPage() + " (index out of bounds : page doesn't exist)");
                     rendersPending.removeFirst();
-                    
                 }else{ // Wait
                     PlatformUtils.sleepThread(100);
                 }
             }
             
             // Close
+            Log.d("Closing Page Renderer Thread and closing document...");
             pdfRenderer = null;
             while(editor.isEdited()){ // wait until document pages are saved
                 PlatformUtils.sleepThread(100);
@@ -81,7 +123,7 @@ public class PDFPagesRender {
             isClosed = true;
             
         }, "Page Renderer").start();
-    
+        
         // Save document pages each 10 seconds if needed
         new Thread(() -> {
             PlatformUtils.sleepThread(10000);
@@ -139,11 +181,8 @@ public class PDFPagesRender {
         graphics.setBackground(Color.WHITE);
         
         try{
-//            PDDocument document = PDDocument.load(file);
-//            PDFRenderer pdfRenderer = new PDFRenderer(document);
             pdfRenderer.renderPageToGraphics(pageNumber, graphics, width / pageSize.getWidth(), width / pageSize.getWidth(), RenderDestination.VIEW);
             scale(pdfRenderer.renderImage(pageNumber, 3, ImageType.RGB), 1800);
-//            document.close();
             graphics.dispose();
             
             return renderImage;
@@ -178,6 +217,17 @@ public class PDFPagesRender {
     
     public int getNumberOfPages(){
         return document.getNumberOfPages();
+    }
+    
+    public void pauseRendering(){
+        pauseRenderingInner = true;
+    }
+    public void resumeRendering(){
+        pauseRenderingInner = false;
+    }
+    
+    public File getFile(){
+        return file;
     }
     
     public PDRectangle getPageRotatedCropBox(int pageNumber){
