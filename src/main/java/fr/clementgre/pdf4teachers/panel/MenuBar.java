@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024. Clément Grennerat
+ * Copyright (c) 2020-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -148,17 +148,17 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             TR.tr("menuBar.tools.sameNameEdits.tooltip"), true);
     private final MenuItem tools6SameNameEditionsNull = createMenuItem(TR.tr("menuBar.tools.sameNameEdits.noEditFounded"), null);
     
-    private final Menu tools6ExportImportEdition = createSubMenu(TR.tr("menuBar.tools.exportOrImportEditOrGradeScale"), SVGPathIcons.EXPORT,
+    private final Menu tools7ExportImportEdition = createSubMenu(TR.tr("menuBar.tools.exportOrImportEditOrGradeScale"), SVGPathIcons.EXPORT,
             TR.tr("menuBar.tools.exportOrImportEditOrGradeScale.tooltip"), true);
     
-    private final MenuItem tools7ExportEdition1All = createMenuItem(TR.tr("menuBar.tools.exportEdit"), null, null,
+    private final MenuItem tools7ExportImportEdition1ExportAll = createMenuItem(TR.tr("menuBar.tools.exportEdit"), null, null,
             TR.tr("menuBar.tools.exportEdit.tooltip"), true, false, false);
-    private final MenuItem tools7ExportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.exportGradeScale"), null, null,
+    private final MenuItem tools7ExportImportEdition2ExportGrades = createMenuItem(TR.tr("menuBar.tools.exportGradeScale"), null, null,
             TR.tr("menuBar.tools.exportGradeScale.tooltip"), true, false, false);
     
-    private final MenuItem tools7ImportEdition1All = createMenuItem(TR.tr("menuBar.tools.importEdit"), null, null,
+    private final MenuItem tools7ExportImportEdition3ImportAll = createMenuItem(TR.tr("menuBar.tools.importEdit"), null, null,
             TR.tr("menuBar.tools.importEdit.tooltip"), true, false, false);
-    private final MenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.importGradeScale"), null, null,
+    private final MenuItem tools7ExportImportEdition4ImportGrades = createMenuItem(TR.tr("menuBar.tools.importGradeScale"), null, null,
             TR.tr("menuBar.tools.importGradeScale.tooltip"), true, false, false);
     
     private final MenuItem tools8FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, new KeyCodeCombination(KeyCode.F11),
@@ -216,13 +216,13 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         tools3AddPages.getItems().setAll(tools3AddPagesItems);
         if(!isSystemMenuBarSupported()) NodeMenuItem.setupMenu(tools3AddPages);
         tools4PdfTools.getItems().addAll(tools4PdfTools1Margin, tools4PdfTools2Booklet, tools4PdfTools3SplitInterval, tools4PdfTools4SplitColor, tools4PdfTools5SplitSelection);
-        tools6ExportImportEdition.getItems().addAll(tools7ExportEdition1All, tools7ExportEdition2Grades, tools7ImportEdition1All, tools7ImportEdition2Grades);
+        tools7ExportImportEdition.getItems().addAll(tools7ExportImportEdition1ExportAll, tools7ExportImportEdition2ExportGrades, tools7ExportImportEdition3ImportAll, tools7ExportImportEdition4ImportGrades);
         tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
         tools8Debug.getItems().add(tools8Debug1OpenConsole);
         tools8Debug.getItems().addAll(tools8Debug2OpenAppFolder, tools8Debug3OpenEditionFile);
         
         tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages, tools4PdfTools,
-                new SeparatorMenuItem(), tools5DeleteAllEdits, tools6SameNameEditions, tools6ExportImportEdition,
+                new SeparatorMenuItem(), tools5DeleteAllEdits, tools6SameNameEditions, tools7ExportImportEdition,
                 new SeparatorMenuItem(), tools8FullScreen,
                 new SeparatorMenuItem(), tools8Debug);
         
@@ -397,10 +397,10 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             if(!isSystemMenuBarSupported()) updateSameNameEditionsMenu();
         });
         
-        tools7ExportEdition1All.setOnAction((e) -> EditionExporter.showExportDialog(false));
-        tools7ExportEdition2Grades.setOnAction((e) -> EditionExporter.showExportDialog(true));
-        tools7ImportEdition1All.setOnAction((e) -> EditionExporter.showImportDialog(false));
-        tools7ImportEdition2Grades.setOnAction((e) -> EditionExporter.showImportDialog(true));
+        tools7ExportImportEdition1ExportAll.setOnAction((e) -> EditionExporter.showExportDialog(false));
+        tools7ExportImportEdition2ExportGrades.setOnAction((e) -> EditionExporter.showExportDialog(true));
+        tools7ExportImportEdition3ImportAll.setOnAction((e) -> EditionExporter.showImportDialog(false));
+        tools7ExportImportEdition4ImportGrades.setOnAction((e) -> EditionExporter.showImportDialog(true));
         
         tools8FullScreen.setOnAction((e) -> Main.window.setFullScreen(!Main.window.isFullScreen()));
         
@@ -469,7 +469,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
             NodeMenuItem.setupMenu(file);
             NodeMenuItem.setupMenu(tools);
-            NodeMenuItem.setupMenu(tools6ExportImportEdition);
+            NodeMenuItem.setupMenu(tools7ExportImportEdition);
             NodeMenuItem.setupMenu(tools8Debug);
             NodeMenuItem.setupMenu(help);
             // edit is edited dynamically

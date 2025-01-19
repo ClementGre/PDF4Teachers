@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2019-2024. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.document.editions;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -22,6 +23,7 @@ import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 
 public class EditionExporter {
     
+    private static final org.apache.commons.logging.Log log = LogFactory.getLog(EditionExporter.class);
     public static void showImportDialog(boolean onlyGrades){
         CustomAlert dialog = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"));
         if(!onlyGrades) dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.header"));
@@ -51,18 +54,20 @@ public class EditionExporter {
         
         File file = null;
         boolean recursive = false;
-        if(MainWindow.mainScreen.hasDocument(true)){
-            MainWindow.mainScreen.document.edition.clearEdit(false);
-            
-            if(option == ButtonPosition.DEFAULT){
-                file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
-            }else if(option == ButtonPosition.OTHER_RIGHT){
-                file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
-                recursive = true;
-            }
+        if(!MainWindow.mainScreen.hasDocument(true)){
+            return;
         }
         
+        if(option == ButtonPosition.DEFAULT){
+            file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
+        }else if(option == ButtonPosition.OTHER_RIGHT){
+            file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
+            recursive = true;
+        }
         if(file == null) return;
+        
+        if(!onlyGrades) MainWindow.mainScreen.document.edition.clearEdit(false);
+        else MainWindow.mainScreen.document.save(true);
         
         GradeCopyGradeScaleDialog gradeCopyGradeScale;
         if(onlyGrades){
@@ -218,17 +223,16 @@ public class EditionExporter {
         boolean oneFile = option == yesAllOneFile;
         final Config oneFileConfig = new Config();
         
-        if(MainWindow.mainScreen.hasDocument(true)){
-            if(MainWindow.mainScreen.document.save(true)){
-                if(option.getButtonData().isDefaultButton() || option == yesAll){
-                    directory = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR);
-                }else if(option == yesAllOneFile){
-                    File file = FilesChooserManager.showSaveDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, "edits.yml", "YAML", ".yml");
-                    if(file != null){
-                        oneFileConfig.setFile(file);
-                        directory = new File(file.getParent());
-                    }
-                }
+        if(!MainWindow.mainScreen.hasDocument(true) || !MainWindow.mainScreen.document.save(false)){
+            return;
+        }
+        if(option.getButtonData().isDefaultButton() || option == yesAll){
+            directory = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR);
+        }else if(option == yesAllOneFile){
+            File file = FilesChooserManager.showSaveDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, "edits.yml", "YAML", ".yml");
+            if(file != null){
+                oneFileConfig.setFile(file);
+                directory = new File(file.getParent());
             }
         }
         if(directory == null) return; // check isPresent btw
@@ -260,10 +264,12 @@ public class EditionExporter {
                 
                 if(onlyGrades){
                     HashMap<String, Object> newBase = new HashMap<>();
+                    newBase.put("versionID", Main.VERSION_ID);
                     List<Object> grades = config.getList("grades");
                     for(Object grade : grades){
                         if(grade instanceof HashMap){
-                            ((HashMap<String, Object>) grade).put("value", -1);
+                            boolean isAlwaysVisibleEligible = ((HashMap<String, Object>) grade).getOrDefault("alwaysVisible", false).equals(true) || ((HashMap<String, Object>) grade).getOrDefault("value", -1).equals(-1);
+                            ((HashMap<String, Object>) grade).put("value", isAlwaysVisibleEligible ? 0 : -1);
                             ((HashMap<?, ?>) grade).remove("alwaysVisible");
                         }
                     }

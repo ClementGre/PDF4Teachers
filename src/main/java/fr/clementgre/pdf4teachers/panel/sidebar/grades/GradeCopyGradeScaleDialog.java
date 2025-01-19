@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024. Clément Grennerat
+ * Copyright (c) 2020-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -125,12 +125,11 @@ public class GradeCopyGradeScaleDialog {
             }
             
             for(GradeRating rating : ratings){
-                
                 GradeElement element = rating.getSamePathIn(gradeElements);
                 if(element != null){
                     if(copyLocations && rating.isEligibleForAlwaysVisible()){ // alwaysVisible == true, use source grade position
                         otherElements.add(rating.toGradeElement(element.getValue(), true));
-                    }else{ // alwaysVisible == false, use destination grade position and value
+                    }else{ // alwaysVisible == false, use existing grade position and value
                         otherElements.add(rating.toGradeElement(element.getValue(), false, element.getRealX(), element.getRealY(), element.getPageNumber()));
                     }
                     gradeElements.remove(element);

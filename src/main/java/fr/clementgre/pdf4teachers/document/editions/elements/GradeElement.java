@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -236,17 +236,15 @@ public class GradeElement extends Element {
         
         NodeMenuItem item1 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.setMax"), false);
         item1.setToolTip(TR.tr("gradeTab.gradeMenu.setMax.tooltip"));
-        NodeMenuItem item2 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.unFill"), false);
-        item2.setToolTip(TR.tr("gradeTab.gradeMenu.unFill.tooltip"));
-        NodeMenuItem item3 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.delete"), false);
-        item3.setToolTip(TR.tr("gradeTab.gradeMenu.delete.tooltip"));
-        item3.disableProperty().bind(MainWindow.gradeTab.isLockGradeScaleProperty());
-        NodeMenuItem item4 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.set0"), false);
-        item4.setToolTip(TR.tr("gradeTab.gradeMenu.set0.tooltip"));
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.set0"), false);
+        item2.setToolTip(TR.tr("gradeTab.gradeMenu.set0.tooltip"));
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.unFill"), false);
+        item3.setToolTip(TR.tr("gradeTab.gradeMenu.unFill.tooltip"));
+        NodeMenuItem item4 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.delete"), false);
+        item4.setToolTip(TR.tr("gradeTab.gradeMenu.delete.tooltip"));
+        item4.disableProperty().bind(MainWindow.gradeTab.isLockGradeScaleProperty());
         NodeMenuItem item5 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.hideUnfilledSubGrades"), false);
         item5.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilledSubGrades.tooltip"));
-        NodeMenuItem item6 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.hideUnfilled"), false);
-        item6.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilledSubGrades.tooltip"));
         
         
         menu.setOnShowing((e) -> {
@@ -255,36 +253,36 @@ public class GradeElement extends Element {
                 MenuItem menuItem = treeItem.getEditMenuItem(menu, getPage());
                 
                 menu.getItems().clear();
-                menu.getItems().addAll(menuItem, item1, item4, item2, item3);
+                menu.getItems().addAll(menuItem, item1, item2, item3, item4);
                 if(treeItem.doContainsChildrenUnfilledAndAlwaysVisible()){
-                    if(treeItem.hasSubGrade()) menu.getItems().add(item5);
-                    else menu.getItems().add(item6);
+                    if(treeItem.hasSubGrade()) item5.setName(TR.tr("gradeTab.gradeMenu.hideUnfilledSubGrades"));
+                    else item5.setName(TR.tr("gradeTab.gradeMenu.hideUnfilled"));
+                    menu.getItems().add(item5);
                 }
-                
                 NodeMenuItem.setupMenuNow(menu);
             });
             
         });
         
-        menu.getItems().addAll(item1, item4, item2, item3, item5, item6);
+        menu.getItems().addAll(item1, item2, item3, item4, item5);
         
         item1.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
             treeItemElement.getPanel().gradeField.setText(MainWindow.gradesDigFormat.format(getTotal()));
             treeItemElement.setChildrenValuesToMax();
         });
-        item2.setOnAction(e -> {
+        item3.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
             treeItemElement.getPanel().gradeField.setText("");
             treeItemElement.resetChildrenValues();
         });
-        item3.setOnAction(e -> {
+        item4.setOnAction(e -> {
             if((GradeTreeView.getTotal()).getCore().equals(this)){
                 // Regenerate Root if this is Root
                 MainWindow.gradeTab.treeView.clearElements(true, true);
             }else delete(true, UType.ELEMENT);
         });
-        item4.setOnAction(e -> {
+        item2.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
             treeItemElement.getPanel().gradeField.setText("0");
             treeItemElement.setChildrenValuesTo0();
