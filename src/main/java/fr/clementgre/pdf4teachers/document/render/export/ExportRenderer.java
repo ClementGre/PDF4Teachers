@@ -28,7 +28,7 @@ import java.util.Calendar;
 
 public class ExportRenderer {
     
-    public boolean exportFile(File pdfFile, File toFile, int imagesDPI, boolean textElements, boolean gradesElements, boolean drawElements, boolean skillElements) throws Exception{
+    public boolean exportFile(File pdfFile, File toFile, int imagesDPI, boolean textElements, boolean gradesElements, boolean drawElements, boolean skillElements, boolean excludeOriginalContent) throws Exception{
         File editFile = Edition.getEditFile(pdfFile);
         
         PDDocument doc;
@@ -62,7 +62,8 @@ public class ExportRenderer {
         for(int pageNumber = 0; pageNumber < doc.getNumberOfPages(); pageNumber++){
             
             PDPage page = doc.getPage(pageNumber);
-            PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
+            var appendMode = excludeOriginalContent ? PDPageContentStream.AppendMode.OVERWRITE : PDPageContentStream.AppendMode.APPEND;
+            PDPageContentStream contentStream = new PDPageContentStream(doc, page, appendMode, true, true);
             page.setBleedBox(page.getCropBox());
             
             float startX = page.getCropBox().getLowerLeftX();

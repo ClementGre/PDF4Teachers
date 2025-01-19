@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -49,6 +49,11 @@ public class ExportWindow extends AlternativeWindow<VBox> {
     CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
     CheckBox drawElements = new CheckBox(TR.tr("elements.name.paints"));
     CheckBox skillElements = new CheckBox(TR.tr("elements.name.skillsTable"));
+    
+    CheckBox doNotIncludeOriginalContent = new CheckBox(TR.tr("exportWindow.options.doNotIncludeOriginalContent"));
+    HBox dpiSettings;
+    Spinner<Integer> imagesDPI;
+    
     Button export;
     
     @Override
@@ -93,6 +98,22 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         HBox.setMargin(drawElements, new Insets(20, 10, 0, 0));
         HBox.setMargin(skillElements, new Insets(20, 0, 0, 0));
         
+        // Common options
+        doNotIncludeOriginalContent.setSelected(false);
+        //HBox.setMargin(doNotIncludeOriginalContent, new Insets(20, 10, 0, 0));
+        
+        Label dpiLabel = new Label(TR.tr("exportWindow.options.dpi"));
+        PaneUtils.setHBoxPosition(dpiLabel, 0, 25, 0);
+        
+        imagesDPI = new Spinner<>(50, 900, (int) MainWindow.userData.settingsExportImagesDPI, 50);
+        imagesDPI.setEditable(true);
+        imagesDPI.getValueFactory().setConverter(new StringToIntConverter((int) MainWindow.userData.settingsExportImagesDPI));
+        PaneUtils.setHBoxPosition(imagesDPI, 85, 25, 0);
+        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.settingsExportImagesDPI = newValue;
+        });
+        dpiSettings = new HBox(10, dpiLabel, imagesDPI);
+        
         // BUTTONS
         export = new Button(TR.tr("actions.export"));
         Button cancel = new Button(TR.tr("actions.cancel"));
@@ -119,31 +140,17 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         PaneUtils.setHBoxPosition(fileName, 0, 30, 0);
         name.getChildren().addAll(fileName);
         
-        Label dpiLabel = new Label(TR.tr("exportWindow.options.dpi"));
-        PaneUtils.setHBoxPosition(dpiLabel, 0, 25, 0);
-        
-        Spinner<Integer> imagesDPI = new Spinner<>(50, 900, (int) MainWindow.userData.settingsExportImagesDPI, 50);
-        imagesDPI.setEditable(true);
-        imagesDPI.getValueFactory().setConverter(new StringToIntConverter((int) MainWindow.userData.settingsExportImagesDPI));
-        PaneUtils.setHBoxPosition(imagesDPI, 85, 25, 0);
-        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
-            MainWindow.userData.settingsExportImagesDPI = newValue;
-        });
-        
-        HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
-        
-        VBox settings = new VBox(10, dpiSettings);
+        VBox settings = new VBox(10, doNotIncludeOriginalContent, dpiSettings);
+        VBox.setMargin(settings, new Insets(20, 0, 0, 0));
         
         root.getChildren().addAll(name, path, types, settings);
-        
-        VBox.setMargin(settings, new Insets(20, 0, 0, 0));
         
         export.setOnAction(event -> {
             
             if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
             
             startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
-                    imagesDPI.getValue(), false, textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected(), skillElements.isSelected());
+                    imagesDPI.getValue(), false, textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected(), skillElements.isSelected(), doNotIncludeOriginalContent.isSelected());
         });
     }
     
@@ -207,16 +214,8 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         Label dpiLabel = new Label(TR.tr("exportWindow.options.dpi"));
         PaneUtils.setHBoxPosition(dpiLabel, 0, 25, 0);
         
-        Spinner<Integer> imagesDPI = new Spinner<>(50, 900, (int) MainWindow.userData.settingsExportImagesDPI, 50);
-        imagesDPI.setEditable(true);
-        imagesDPI.getValueFactory().setConverter(new StringToIntConverter((int) MainWindow.userData.settingsExportImagesDPI));
-        PaneUtils.setHBoxPosition(imagesDPI, 85, 25, 0);
-        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
-            MainWindow.userData.settingsExportImagesDPI = newValue;
-        });
-        
-        HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
-        VBox settings = new VBox(10, onlyEdited, dpiSettings);
+        VBox settings = new VBox(10, doNotIncludeOriginalContent, onlyEdited, dpiSettings);
+        VBox.setMargin(settings, new Insets(20, 0, 0, 0));
         
         root.getChildren().addAll(name, replace, path, types, settings);
         
@@ -229,10 +228,10 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         HBox.setMargin(byText, new Insets(10, 5, 0, 5));
         HBox.setMargin(byInput, new Insets(5, 0, 0, 0));
         
-        VBox.setMargin(onlyEdited, new Insets(20, 0, 5, 0));
+        VBox.setMargin(onlyEdited, new Insets(0, 0, 5, 0));
         
         export.setOnAction(event -> startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
-                imagesDPI.getValue(), onlyEdited.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected(), skillElements.isSelected()));
+                imagesDPI.getValue(), onlyEdited.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected(), skillElements.isSelected(), doNotIncludeOriginalContent.isSelected()));
         
         onlyEdited.selectedProperty().addListener((observable, oldValue, newValue) -> updateMultipleFilesTitle());
         updateMultipleFilesTitle();
@@ -247,7 +246,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
     }
     
     public void startExportation(File directory, String prefix, String suffix, String replaceText, String replaceByText, String customName,
-                                 int imagesDPI, boolean onlyEdited, boolean textElements, boolean gradesElements, boolean drawElements, boolean skillElements){
+                                 int imagesDPI, boolean onlyEdited, boolean textElements, boolean gradesElements, boolean drawElements, boolean skillElements, boolean excludeOriginalContent){
         
         directory.mkdirs();
         
@@ -300,7 +299,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
             @Override
             public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data, boolean recursive){
                 try{
-                    boolean ok = new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements, skillElements);
+                    boolean ok = new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements, skillElements, excludeOriginalContent);
                     if(ok) return TwoStepListAction.ProcessResult.OK;
                     else return TwoStepListAction.ProcessResult.SKIPPED;
                 }catch(Exception e){

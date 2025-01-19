@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -157,13 +157,13 @@ public final class StringUtils {
     }
     
     public static List<Charset> getAvailableCharsets(){
-        var charsets = Set.of(StandardCharsets.UTF_8,
+        var charsets = new HashSet<>(Set.of(StandardCharsets.UTF_8,
                 StandardCharsets.ISO_8859_1,
                 StandardCharsets.US_ASCII,
                 StandardCharsets.UTF_16LE,
                 StandardCharsets.UTF_16,
-                StandardCharsets.UTF_16BE,
-                Charset.defaultCharset());
+                StandardCharsets.UTF_16BE));
+        charsets.add(Charset.defaultCharset());
         return List.of(charsets.toArray(new Charset[0]));
     }
     
