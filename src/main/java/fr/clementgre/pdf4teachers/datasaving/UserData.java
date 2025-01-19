@@ -328,7 +328,7 @@ public class UserData {
                     // OPEN DOC WITH PARAMS OR Auto Documentation OR last opened file
     
                     boolean hasOpenedParamDoc = MainWindow.mainScreen.openFiles(LockManager.getToOpenFiles(Main.params), !Main.window.doOpenDocumentation); // Params
-                    if(Main.window.doOpenDocumentation){ // Documentation
+                    if(Main.window.doOpenDocumentation && !hasOpenedParamDoc){ // Documentation
                         Platform.runLater(() -> MainWindow.mainScreen.openFile(TR.getDocFile(), true));
                         
                     }else if(new File(lastOpenedFile).exists() && !hasOpenedParamDoc){ // Last opened file

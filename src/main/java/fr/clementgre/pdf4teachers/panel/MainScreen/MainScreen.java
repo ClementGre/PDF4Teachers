@@ -616,6 +616,12 @@ public class MainScreen extends Pane {
         });
     }
     
+    /**
+     * Adds files in the files tab and may open the first file as the current document.
+     * @param toOpenFiles List of files to add in the files tab.
+     * @param openDocument If true, and the size of the list is 1, the first file will be opened as the current document.
+     * @return true if the first file of the list has been opened as the current document.
+     */
     public boolean openFiles(List<File> toOpenFiles, boolean openDocument){
         MainWindow.filesTab.openFiles(toOpenFiles, true);
         if(openDocument && toOpenFiles.size() == 1){

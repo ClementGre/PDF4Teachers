@@ -105,10 +105,14 @@ public class LockManager {
         }catch(Unique4jException e){Log.eNotified(e);}
     }
     
+    private static long lastOpenFilesTime = System.currentTimeMillis();
     public static void tryToOpenFiles(List<File> toOpenFiles){
+        // If files are opened in PDF4Teachers within a second, we don't open the new files as new documents.
+        boolean forceNotToOpen = System.currentTimeMillis() - lastOpenFilesTime < 1000;
+        
         if(Main.window != null && Main.window.isShowing()){
             
-            MainWindow.mainScreen.openFiles(toOpenFiles, !MainWindow.mainScreen.hasDocument(false));
+            MainWindow.mainScreen.openFiles(toOpenFiles, !forceNotToOpen);
             
             /*Main.window.setIconified(true);*/
             Main.window.requestFocus();
@@ -116,8 +120,7 @@ public class LockManager {
         }else if(Main.window != null){
             Main.window.setOnShown((e) -> MainWindow.mainScreen.openFiles(toOpenFiles, true));
         }
-        
-        
+        lastOpenFilesTime = System.currentTimeMillis();
     }
     
     public static List<File> getToOpenFiles(List<String> rawArgs){
