@@ -112,13 +112,13 @@ image is kept.
 - Pretty and intuitive interface, with a dark theme and support for OS theme sync.
 - Full support for undo/redo operations.
 - Support for copy/paste elements between PDFs and between applications.
-- Available languages : English, French, Italian, [add your language !](https://weblate.pdf4teachers.org/projects/)
+- Available languages : English, French, Italian, [add your language !](https://.pdf4teachers.org/projects/)
 
 # Contribute
 
 ## Translate the app, website or documentation
 
-All translations can be done on [Weblate](https://weblate.pdf4teachers.org/projects/).
+All translations can be done on [Weblate](https://weblate.clgr.io/projects/).
 
 Otherwise, you can also translate the app by yourself, by editing the files in the `src/main/resources/translations`
 folder.
