@@ -9,7 +9,7 @@ body:
     attributes:
       label: Prérequis
       options:
-        - label: J'ai vérifié que cette fonctionnalité n'a pas déjà été suggéré [ici](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.4.2%22+label%3A%22enhancement%22+)
+        - label: J'ai vérifié que cette fonctionnalité n'a pas déjà été suggéré [ici](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.4.3%22+label%3A%22enhancement%22+)
           required: true
   - type: textarea
     id: solution

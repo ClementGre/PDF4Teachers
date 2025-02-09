@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -93,7 +93,7 @@ dependencies {
 def os = org.gradle.internal.os.OperatingSystem.current()
 def aarch64 = System.getProperty("os.arch") == "aarch64"
 
-version = "1.4.2"
+version = "1.4.3"
 description = "PDF students assessments editor"
 //frenchDescription="Éditeur de copies PDF"
 
@@ -222,7 +222,7 @@ jlink {
 
     }else{
         if (os.windows) javaHome.set('C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.3.9-hotspot')
-        else if (os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-21.0.3')
+        else if (os.macOsX && aarch64) javaHome.set('/Library/Java/JavaVirtualMachines/openjdk-21.jdk/Contents/Home')
         else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home')
         else if (os.linux) javaHome.set('/home/clement/.jdks/corretto-21.0.4')
         project.logger.info("Using JDK: ".concat(javaHome.get()))
