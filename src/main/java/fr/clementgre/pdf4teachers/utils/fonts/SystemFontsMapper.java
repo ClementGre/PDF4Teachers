@@ -134,14 +134,10 @@ public class SystemFontsMapper {
     private boolean addFontToMap(Font font, String path){
         
         // Check if PDFBox is able to load the font, otherwise, cancel the add.
-        PDDocument doc = new PDDocument();
-        try{
-            PDType0Font.load(doc, new FileInputStream(path));
-            doc.close();
+        try(PDDocument doc = new PDDocument();
+            FileInputStream fis = new FileInputStream(path)){
+            PDType0Font.load(doc, fis);
         }catch(IOException e){
-            try{
-                doc.close();
-            }catch(IOException ex){ Log.eNotified(ex); }
             return false;
         }
         

@@ -47,52 +47,50 @@ public class SkillsCSVWriter {
             File dest = getDestinationFile();
             if(dest == null) return;
             
-            BufferedWriter writer  = new BufferedWriter(new FileWriter(dest, Charset.defaultCharset()));
-            ICSVWriter csvWriter = new CSVWriterBuilder(writer).withSeparator(StringUtils.getCsvSeparator()).build();
-            
-            // Mapping notations keyboard char by ID
-            HashMap<Long, String> notationIds = assessment.getNotationsWithDefaults().stream().collect(Collectors.toMap(Notation::getId, Notation::getKeyboardChar, (x, y) -> y, HashMap::new));
-    
-            
-            // Assessment metadata
-            csvWriter.writeNext(new String[]{assessment.getName(), assessment.getClasz(), assessment.getDate()});
-            csvWriter.writeNext(new String[]{});
-            
-            
-            // Other notation style with students in lines and skills in columns.
-            /*// Header (one column for each skill)
-            csvWriter.writeNext(Stream.concat(Stream.of(""),
-                            assessment.getSkills().stream().map(s -> s.getAcronym() + " - " + s.getName()))
-                    .toArray(String[]::new));
-            
-            // One line for each student
-            editionGrades.forEach(editionGrade -> {
-                csvWriter.writeNext(Stream.concat(Stream.of(editionGrade.fileName()), // First column: student name
-                        assessment.getSkills().stream()
-                                .map(s -> editionGrade.skills().stream().filter(es -> es.getSkillId() == s.getId()).findAny().orElse(null)) // map to matching skill
-                                .map(s -> s == null ? "" : notationIds.get(s.getNotationId()))) // map to matching notation keyboard char
-                                .toArray(String[]::new));
-            });*/
-    
-            // One line for each skill, one line for each file
-            csvWriter.writeNext(editionGrades.stream().map(EditionGrades::fileName).toArray(String[]::new));
-            
-            assessment.getSkills().forEach(skill -> {
-                csvWriter.writeNext(Stream.concat(editionGrades.stream()
-                                        .map(sg -> sg.skills().stream().filter(s -> s.getSkillId() == skill.getId()).findAny().orElse(null)) // map to matching skill
-                                        .map(s -> s == null ? "" : notationIds.get(s.getNotationId())), // map to matching notation keyboard char
-                        Stream.of(skill.getAcronym() + " - " + skill.getName())).toArray(String[]::new)); // Last column: notations names
-            });
-            
-            
-            // Notations keyboard chat legend
-            csvWriter.writeNext(new String[]{});
-            assessment.getNotationsWithDefaults().stream().forEach(n -> {
-                csvWriter.writeNext(new String[]{n.getName(), n.getKeyboardChar()});
-            });
-            
-            csvWriter.close();
-            writer.close();
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter(dest, Charset.defaultCharset()));
+                ICSVWriter csvWriter = new CSVWriterBuilder(writer).withSeparator(StringUtils.getCsvSeparator()).build()){
+                
+                // Mapping notations keyboard char by ID
+                HashMap<Long, String> notationIds = assessment.getNotationsWithDefaults().stream().collect(Collectors.toMap(Notation::getId, Notation::getKeyboardChar, (x, y) -> y, HashMap::new));
+        
+                
+                // Assessment metadata
+                csvWriter.writeNext(new String[]{assessment.getName(), assessment.getClasz(), assessment.getDate()});
+                csvWriter.writeNext(new String[]{});
+                
+                
+                // Other notation style with students in lines and skills in columns.
+                /*// Header (one column for each skill)
+                csvWriter.writeNext(Stream.concat(Stream.of(""),
+                                assessment.getSkills().stream().map(s -> s.getAcronym() + " - " + s.getName()))
+                        .toArray(String[]::new));
+                
+                // One line for each student
+                editionGrades.forEach(editionGrade -> {
+                    csvWriter.writeNext(Stream.concat(Stream.of(editionGrade.fileName()), // First column: student name
+                            assessment.getSkills().stream()
+                                    .map(s -> editionGrade.skills().stream().filter(es -> es.getSkillId() == s.getId()).findAny().orElse(null)) // map to matching skill
+                                    .map(s -> s == null ? "" : notationIds.get(s.getNotationId()))) // map to matching notation keyboard char
+                                    .toArray(String[]::new));
+                });*/
+        
+                // One line for each skill, one line for each file
+                csvWriter.writeNext(editionGrades.stream().map(EditionGrades::fileName).toArray(String[]::new));
+                
+                assessment.getSkills().forEach(skill -> {
+                    csvWriter.writeNext(Stream.concat(editionGrades.stream()
+                                            .map(sg -> sg.skills().stream().filter(s -> s.getSkillId() == skill.getId()).findAny().orElse(null)) // map to matching skill
+                                            .map(s -> s == null ? "" : notationIds.get(s.getNotationId())), // map to matching notation keyboard char
+                            Stream.of(skill.getAcronym() + " - " + skill.getName())).toArray(String[]::new)); // Last column: notations names
+                });
+                
+                
+                // Notations keyboard chat legend
+                csvWriter.writeNext(new String[]{});
+                assessment.getNotationsWithDefaults().stream().forEach(n -> {
+                    csvWriter.writeNext(new String[]{n.getName(), n.getKeyboardChar()});
+                });
+            }
     
             DialogBuilder.showAlertWithOpenDirOrFileButton(TR.tr("actions.export.completedMessage"), TR.tr("actions.export.completedMessage"),
                     TR.tr("actions.export.fileAvailable"), dest.getParentFile().getAbsolutePath(), dest.getAbsolutePath());

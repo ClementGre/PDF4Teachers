@@ -35,26 +35,26 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
         
         ////////// GET LAST RELEASE INCLUDING PRE //////////
         String parsedVersion = null;
+        HttpURLConnection con = null;
         try{
             URL url = new URL("https://api.github.com/repos/clementgre/PDF4Teachers/tags");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json; utf-8");
             
             JsonFactory jfactory = new JsonFactory();
-            JsonParser jParser = jfactory.createParser(con.getInputStream());
-            
-            JsonToken token;
-            while((token = jParser.nextToken()) != null){
-                String key = jParser.getCurrentName();
-                
-                if("name".equals(key)){
-                    jParser.nextToken();
-                    parsedVersion = jParser.getText();
-                    break;
+            try(JsonParser jParser = jfactory.createParser(con.getInputStream())){
+                JsonToken token;
+                while((token = jParser.nextToken()) != null){
+                    String key = jParser.getCurrentName();
+                    
+                    if("name".equals(key)){
+                        jParser.nextToken();
+                        parsedVersion = jParser.getText();
+                        break;
+                    }
                 }
             }
-            jParser.close();
             
             if(parsedVersion.equals(Main.VERSION)){
                 // Up to date with the last release
@@ -65,36 +65,38 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             Log.eNotified(e);
             error = true;
             return false;
+        }finally{
+            if(con != null) con.disconnect();
         }
         
         ////////// GET LAST RELEASE DETAILS ////////// (isn't up to date -> search details about the last version)
         String parsedDescription = null;
+        con = null;
         try{
             URL url = new URL("https://api.github.com/repos/clementgre/PDF4Teachers/releases/tags/" + parsedVersion);
             
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json; utf-8");
             
             JsonFactory jfactory = new JsonFactory();
-            JsonParser jParser = jfactory.createParser(con.getInputStream());
-            
             boolean parsedPre = false;
             
-            JsonToken token;
-            while((token = jParser.nextToken()) != null){
-                String fieldname = jParser.getCurrentName();
-                
-                if("prerelease".equals(fieldname)){
-                    jParser.nextToken();
-                    parsedPre = jParser.getBooleanValue();
-                }else if("body".equals(fieldname)){
-                    jParser.nextToken();
-                    parsedDescription = jParser.getText();
-                    break;
+            try(JsonParser jParser = jfactory.createParser(con.getInputStream())){
+                JsonToken token;
+                while((token = jParser.nextToken()) != null){
+                    String fieldname = jParser.getCurrentName();
+                    
+                    if("prerelease".equals(fieldname)){
+                        jParser.nextToken();
+                        parsedPre = jParser.getBooleanValue();
+                    }else if("body".equals(fieldname)){
+                        jParser.nextToken();
+                        parsedDescription = jParser.getText();
+                        break;
+                    }
                 }
             }
-            jParser.close();
             
             if(parsedDescription == null){
                 error = true;
@@ -114,38 +116,40 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             Log.eNotified(e);
             error = true;
             return false;
+        }finally{
+            if(con != null) con.disconnect();
         }
         
         ////////// GET LAST RELEASE WITHOUT PRE ////////// (isn't up to date && last is pre -> find the latest non-pre version)
+        con = null;
         try{
             URL url = new URL("https://api.github.com/repos/clementgre/PDF4Teachers/releases/latest");
             
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json; utf-8");
             
             JsonFactory jfactory = new JsonFactory();
-            JsonParser jParser = jfactory.createParser(con.getInputStream());
-            
             String parsedLatestVersion = null;
             String parsedLatestDescription = null;
             
-            JsonToken token;
-            while((token = jParser.nextToken()) != null){
-                String fieldname = jParser.getCurrentName();
-                
-                if("tag_name".equals(fieldname)){
-                    jParser.nextToken();
-                    parsedLatestVersion = jParser.getText();
+            try(JsonParser jParser = jfactory.createParser(con.getInputStream())){
+                JsonToken token;
+                while((token = jParser.nextToken()) != null){
+                    String fieldname = jParser.getCurrentName();
                     
-                }
-                if("body".equals(fieldname)){
-                    jParser.nextToken();
-                    parsedLatestDescription = jParser.getText();
-                    break;
+                    if("tag_name".equals(fieldname)){
+                        jParser.nextToken();
+                        parsedLatestVersion = jParser.getText();
+                        
+                    }
+                    if("body".equals(fieldname)){
+                        jParser.nextToken();
+                        parsedLatestDescription = jParser.getText();
+                        break;
+                    }
                 }
             }
-            jParser.close();
             
             if(parsedLatestVersion == null){
                 error = true;
@@ -168,6 +172,8 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             Log.eNotified(e);
             error = true;
             return false;
+        }finally{
+            if(con != null) con.disconnect();
         }
     }
     

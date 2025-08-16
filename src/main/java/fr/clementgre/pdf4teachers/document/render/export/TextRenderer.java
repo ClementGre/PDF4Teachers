@@ -157,11 +157,11 @@ public class TextRenderer {
         Map.Entry<String, String> fontEntry = Map.entry(font.getFamily(), FontUtils.getDefaultFontFileName(italic, bold));
         
         if(!fonts.containsKey(fontEntry)){
-            InputStream is = FontUtils.getFontFile(font.getFamily(), italic, bold);
-            PDType0Font pdFont = PDType0Font.load(doc, is);
-            contentStream.setFont(pdFont, (float) font.getSize());
-            
-            fonts.put(fontEntry, pdFont);
+            try(InputStream is = FontUtils.getFontFile(font.getFamily(), italic, bold)){
+                PDType0Font pdFont = PDType0Font.load(doc, is);
+                contentStream.setFont(pdFont, (float) font.getSize());
+                fonts.put(fontEntry, pdFont);
+            }
         }else{
             contentStream.setFont(fonts.get(fontEntry), (float) font.getSize());
         }

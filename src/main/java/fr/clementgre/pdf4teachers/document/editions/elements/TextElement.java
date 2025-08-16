@@ -462,6 +462,7 @@ public class TextElement extends Element {
             Graphics2D g = image.createGraphics();
             g.setBackground(new java.awt.Color(0f, 0f, 0f, 1f));
             icon.paintIcon(null, g, 0, 0);
+            g.dispose();
             
             return image;
             

@@ -48,8 +48,9 @@ public class LogsManager {
     }
     public static void printErr(Throwable e){
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
+        try(PrintWriter pw = new PrintWriter(sw)){
+            e.printStackTrace(pw);
+        }
         logsOutput.append(sw.getBuffer());
         
         consoleOut.print(ConsoleColors.RED_BRIGHT);
