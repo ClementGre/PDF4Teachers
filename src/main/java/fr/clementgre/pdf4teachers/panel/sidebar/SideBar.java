@@ -297,17 +297,23 @@ public class SideBar extends TabPane {
     }
     
     private boolean wasHidden = false;
+    private double savedWidth = DEFAULT_WIDTH;
     
     public void toggleVisibility(){
         if(!getTabs().isEmpty()){
             if(MainWindow.mainPane.getItems().contains(this)){
-                // Hide the sidebar
-                removeToPane();
-                wasHidden = true;
-            }else if(wasHidden){
-                // Show the sidebar
-                addToPane();
-                wasHidden = false;
+                if(!wasHidden){
+                    // Hide the sidebar by setting width to 0
+                    savedWidth = getWidthByDivider();
+                    setWidthByEditingDivider(0);
+                    setMaxWidth(0);
+                    wasHidden = true;
+                }else{
+                    // Show the sidebar by restoring saved width
+                    setMaxWidth(MAX_WIDTH);
+                    setWidthByEditingDivider(savedWidth);
+                    wasHidden = false;
+                }
             }
         }
     }
