@@ -333,12 +333,10 @@ public class GradeExportRenderer {
         }
         
         file.createNewFile();
-        BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
-        
-        writer.write(String.valueOf(content));
-        
-        writer.flush();
-        writer.close();
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))){
+            writer.write(String.valueOf(content));
+            writer.flush();
+        }
         
         exported++;
         content = new StringBuilder();

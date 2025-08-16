@@ -348,16 +348,17 @@ public class KeyboardShortcuts {
     }
     private void firePaintElementsShortcut(KeyEvent e){
         Optional<VectorGridElement> vectorData = matchVectorShortcut(e);
-        if(vectorData.isPresent()){
-            vectorData.get().addToDocument(false, true);
+        vectorData.ifPresent(data -> {
+            data.addToDocument(false, true);
             e.consume();
-            return;
-        }
+        });
+        if(vectorData.isPresent()) return;
+        
         Optional<ImageGridElement> imageData = matchImageShortcut(e);
-        if(imageData.isPresent()){
-            imageData.get().addToDocument(true);
+        imageData.ifPresent(data -> {
+            data.addToDocument(true);
             e.consume();
-        }
+        });
     }
     
     private boolean numberPressed(int i, boolean alt){
