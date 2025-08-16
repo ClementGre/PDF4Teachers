@@ -261,6 +261,7 @@ jlink {
             installerOptions += [
                     '--linux-menu-group', 'Education;Office',
                     '--linux-shortcut',
+                    '--resource-dir', 'distribution/linux/jpackage-resources',
                     //'--file-associations', 'distribution/linux/association-lin.properties'
             ]
             if (installerType == 'deb') installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@clgr.io']
