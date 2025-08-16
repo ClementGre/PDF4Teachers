@@ -23,6 +23,40 @@ import java.util.stream.Collectors;
 
 public final class FilesUtils {
     
+    /**
+     * Ensures the file path is compatible with the operating system's limitations.
+     * On Windows, if the path is longer than 200 characters, it prepends \\?\ to support long paths.
+     * On other platforms, returns the original file unchanged.
+     * 
+     * @param file The file to make safe for the current OS
+     * @return The file with OS-compatible path handling
+     */
+    public static File toSafePath(File file) {
+        if (!PlatformUtils.isWindows()) {
+            return file;
+        }
+        
+        String path = file.getAbsolutePath();
+        
+        // Already has long path prefix
+        if (path.startsWith("\\\\?\\")) {
+            return file;
+        }
+        
+        // Check if path needs long path support (approaching the limit)
+        // Use 200 as threshold to be safe (Windows limit is 260)
+        if (path.length() > 200) {
+            // Convert to long path format
+            if (!path.startsWith("\\\\")) {  // Not a UNC path
+                return new File("\\\\?\\" + path);
+            } else {  // UNC path: \\server\share -> \\?\UNC\server\share
+                return new File("\\\\?\\UNC\\" + path.substring(2));
+            }
+        }
+        
+        return file;
+    }
+    
     public static long getSize(Path path){
         try{
             if(Files.isRegularFile(path)){

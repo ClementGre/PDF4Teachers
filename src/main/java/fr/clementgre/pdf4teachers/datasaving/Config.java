@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.paint.Color;
@@ -35,8 +36,9 @@ public class Config {
     }
     
     public Config(File file) throws IOException{
-        file.createNewFile();
-        this.file = file;
+        File safeFile = FilesUtils.toSafePath(file);
+        safeFile.createNewFile();
+        this.file = safeFile;
         setupYAML();
     }
     
@@ -57,7 +59,8 @@ public class Config {
     public void load() throws IOException{
         if(file == null) return;
         
-        InputStream input = new FileInputStream(file);
+        File safeFile = FilesUtils.toSafePath(file);
+        InputStream input = new FileInputStream(safeFile);
         base = yaml.load(input);
         input.close();
         
@@ -67,20 +70,23 @@ public class Config {
     
     public void save() throws IOException{
         if(file == null) return;
-        Writer output = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+        File safeFile = FilesUtils.toSafePath(file);
+        Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8);
         yaml.dump(base, output);
         output.close();
     }
     
     public void saveTo(File file) throws IOException{
-        Writer output = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+        File safeFile = FilesUtils.toSafePath(file);
+        Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8);
         yaml.dump(base, output);
         output.close();
     }
     
     public void saveToDestFile() throws IOException{
         if(destFile == null) return;
-        Writer output = new OutputStreamWriter(new FileOutputStream(destFile), StandardCharsets.UTF_8);
+        File safeFile = FilesUtils.toSafePath(destFile);
+        Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8);
         yaml.dump(base, output);
         output.close();
     }

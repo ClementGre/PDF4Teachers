@@ -19,6 +19,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -413,7 +414,8 @@ public class Edition{
     public static File getEditFile(File pdfFile){
         String namePath = pdfFile.getParentFile().getAbsolutePath().replace(File.separator, "!E!").replace(":", "!P!");
         String nameName = pdfFile.getName() + ".yml";
-        return new File(Main.dataFolder + "editions" + File.separator + namePath + "!E!" + nameName);
+        File editFile = new File(Main.dataFolder + "editions" + File.separator + namePath + "!E!" + nameName);
+        return FilesUtils.toSafePath(editFile);
     }
     
     // get PDF file from YAML file
