@@ -1,0 +1,42 @@
+#!/bin/sh
+# postinst script for APPLICATION_PACKAGE
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see https://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+case "$1" in
+    configure|abort-upgrade)
+        # Install desktop file with --novendor to prevent setting as default PDF viewer
+        if [ -x /usr/bin/xdg-desktop-menu ]; then
+            /usr/bin/xdg-desktop-menu install --novendor APPLICATION_DESKTOP_FILE || true
+        fi
+        
+        # Create symbolic link if needed
+        if [ "LAUNCHER_AS_SERVICE" = "true" ]; then
+            ln -sf APPLICATION_LAUNCHER_FILENAME /usr/bin/APPLICATION_PACKAGE
+        fi
+    ;;
+
+    abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+exit 0
