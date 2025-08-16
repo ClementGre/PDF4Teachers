@@ -67,12 +67,9 @@ public class ConvertRenderer {
             }
         }else{
             documentCallBack.call(Map.entry(StringUtils.removeAfterLastOccurrence(convertPane.docName.getText(), ".pdf") + ".pdf", 0d));
-            File[] files = new File[convertPane.srcFiles.getText().split(Pattern.quote("\n")).length];
-            int i = 0;
-            for(String filePath : convertPane.srcFiles.getText().split(Pattern.quote("\n"))){
-                files[i] = new File(filePath);
-                i++;
-            }
+            File[] files = Arrays.stream(convertPane.srcFiles.getText().split(Pattern.quote("\n")))
+                    .map(File::new)
+                    .toArray(File[]::new);
             convertFile(files, new File(out + StringUtils.removeAfterLastOccurrence(convertPane.docName.getText(), ".pdf") + ".pdf"));
         }
         documentCallBack.call(Map.entry("", 0d));

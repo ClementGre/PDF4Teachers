@@ -142,9 +142,7 @@ public class SACocheWriter {
             if(skillTableElement != null && skillTableElement.getAssessmentId() == assessment.getId()){
                 
                 Optional<Student> studentOptional = assessment.getStudents().stream().filter(s -> s.id() == skillTableElement.getStudentId()).findAny();
-                if(studentOptional.isPresent()){
-                    Student student = studentOptional.get();
-                    
+                studentOptional.ifPresentOrElse(student -> {
                     studentGrades.stream().filter(s -> s.studentName().equals(student.name())).forEach(sg -> {
                         if(!doubleAffectation.containsKey(student.name())){
                             doubleAffectation.put(student.name(), new ArrayList<>(Arrays.asList(sg.fileName(), Edition.getFileFromEdit(edit).getName())));
@@ -157,9 +155,7 @@ public class SACocheWriter {
                         }
                     });
                     studentGrades.add(new StudentGrades(student.id(), student.name(), Edition.getFileFromEdit(edit).getName(), skillTableElement.getEditionSkills()));
-                }else{
-                    aloneDocuments.add(Edition.getFileFromEdit(edit).getName());
-                }
+                }, () -> aloneDocuments.add(Edition.getFileFromEdit(edit).getName()));
             }
         }
         aloneStudents = assessment.getStudents()
