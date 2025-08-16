@@ -28,6 +28,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.margin.MarginWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.splitpdf.SplitWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
@@ -116,6 +117,25 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem edit2Redo = createMenuItem(TR.tr("actions.redo"), SVGPathIcons.REDO, UndoEngine.KEY_COMB_REDO,
             TR.tr("menuBar.edit.redo.tooltip"), true, false, false);
     
+    
+    ////////// VIEW //////////
+    
+    public final Menu view = new Menu(TR.tr("menuBar.view"));
+    
+    private final MenuItem view1ToggleSidebars = createMenuItem(TR.tr("menuBar.view.toggleSidebars"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.B, KeyCombination.SHORTCUT_DOWN),
+            TR.tr("menuBar.view.toggleSidebars.tooltip"));
+    
+    private final MenuItem view2RestoreDefaultSidebars = createMenuItem(TR.tr("menuBar.view.restoreDefaultSidebars"), SVGPathIcons.REDO, null,
+            TR.tr("menuBar.view.restoreDefaultSidebars.tooltip"));
+    
+    private final MenuItem view3MinimizeSidebars = createMenuItem(TR.tr("menuBar.view.minimizeSidebars"), SVGPathIcons.EXCHANGE, null,
+            TR.tr("menuBar.view.minimizeSidebars.tooltip"));
+    
+    private final MenuItem view4MoveAllTabsLeft = createMenuItem(TR.tr("menuBar.view.moveAllTabsLeft"), null, null,
+            TR.tr("menuBar.view.moveAllTabsLeft.tooltip"));
+    
+    private final MenuItem view5MoveAllTabsRight = createMenuItem(TR.tr("menuBar.view.moveAllTabsRight"), null, null,
+            TR.tr("menuBar.view.moveAllTabsRight.tooltip"));
     
     ////////// TOOLS //////////
     
@@ -209,6 +229,11 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         ////////// EDIT //////////
         
         edit.getItems().addAll(edit1Undo, edit2Redo, new SeparatorMenuItem(), edit3Cut, edit4Copy, edit5Paste);
+        
+        ////////// VIEW //////////
+        
+        view.getItems().addAll(view1ToggleSidebars, new SeparatorMenuItem(), view2RestoreDefaultSidebars, view3MinimizeSidebars, 
+                new SeparatorMenuItem(), view4MoveAllTabsLeft, view5MoveAllTabsRight);
         
         ////////// TOOLS //////////
         
@@ -341,6 +366,25 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         edit4Copy.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.COPY));
         edit5Paste.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.PASTE));
         
+        ////////// VIEW //////////
+        
+        view1ToggleSidebars.setOnAction(e -> SideBar.toggleSideBarsVisibility());
+        
+        view2RestoreDefaultSidebars.setOnAction(e -> {
+            MainWindow.leftBar.restoreDefaultWidth();
+            MainWindow.rightBar.restoreDefaultWidth();
+            // TODO: Restore default tab organization
+        });
+        
+        view3MinimizeSidebars.setOnAction(e -> {
+            MainWindow.leftBar.minimizeWidth();
+            MainWindow.rightBar.minimizeWidth();
+        });
+        
+        view4MoveAllTabsLeft.setOnAction(e -> SideBar.moveAllTabsToLeft());
+        
+        view5MoveAllTabsRight.setOnAction(e -> SideBar.moveAllTabsToRight());
+        
         ////////// TOOLS //////////
         
         tools1Convert.setOnAction(e -> new ConvertDocument());
@@ -432,7 +476,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         StyleManager.putStyle(this, Style.ACCENT);
         
         if(isSystemMenuBarSupported()){
-            getMenus().addAll(file, edit, tools, help);
+            getMenus().addAll(file, edit, view, tools, help);
             
             MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
             
@@ -475,7 +519,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             // edit is edited dynamically
             NodeMenuItem.setupDynamicMenu(edit);
             
-            getMenus().addAll(file, edit, tools, help, settings, about);
+            getMenus().addAll(file, edit, view, tools, help, settings, about);
             
             setupMenus();
             Main.settings.menuForceOpen.valueProperty().addListener((observable, oldValue, newValue) -> {
