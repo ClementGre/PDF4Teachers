@@ -197,15 +197,23 @@ public class SideBar extends TabPane {
     }
     private void removeToPane(){
         if(MainWindow.mainPane.getItems().contains(this)){
-            if(left){
-                // Right width must be updated to stay the same
-                double rightWidth = MainWindow.rightBar.getWidthByDivider();
-                
-                MainWindow.mainPane.getItems().remove(this);
-                
-                MainWindow.rightBar.setWidthByEditingDivider(rightWidth);
+            // Check if removing this would leave no sidebars (only mainScreen)
+            if(MainWindow.mainPane.getItems().size() <= 2){
+                // Instead of removing, just set width to minimal value
+                // Using 1 instead of 0 to avoid GTK warnings on Linux
+                setMaxWidth(1);
+                setWidthByEditingDivider(1);
             }else{
-                MainWindow.mainPane.getItems().remove(this);
+                if(left){
+                    // Right width must be updated to stay the same
+                    double rightWidth = MainWindow.rightBar.getWidthByDivider();
+                    
+                    MainWindow.mainPane.getItems().remove(this);
+                    
+                    MainWindow.rightBar.setWidthByEditingDivider(rightWidth);
+                }else{
+                    MainWindow.mainPane.getItems().remove(this);
+                }
             }
         }
         
@@ -296,6 +304,72 @@ public class SideBar extends TabPane {
         MainWindow.rightBar.toggleVisibility();
     }
     
+    public static void moveAllTabsToLeft(){
+        // Ensure left bar is visible
+        if(!MainWindow.mainPane.getItems().contains(MainWindow.leftBar)){
+            MainWindow.leftBar.addToPane();
+        }
+        
+        // Move all tabs from right bar to left bar
+        ArrayList<Tab> tabsToMove = new ArrayList<>(MainWindow.rightBar.getTabs());
+        for(Tab tab : tabsToMove){
+            MainWindow.rightBar.getTabs().remove(tab);
+            MainWindow.leftBar.getTabs().add(tab);
+        }
+        
+        // Ensure left bar has proper width
+        if(MainWindow.leftBar.getWidthByDivider() <= 50){
+            MainWindow.leftBar.setMaxWidth(MAX_WIDTH);
+            MainWindow.leftBar.setWidthByEditingDivider(DEFAULT_WIDTH);
+        }
+        
+        // Hide the empty right bar (using 1 instead of 0 to avoid GTK warnings)
+        if(MainWindow.rightBar.getTabs().isEmpty() && MainWindow.mainPane.getItems().contains(MainWindow.rightBar)){
+            MainWindow.rightBar.setMaxWidth(1);
+            MainWindow.rightBar.setWidthByEditingDivider(1);
+        }
+    }
+    
+    public static void moveAllTabsToRight(){
+        // Ensure right bar is visible
+        if(!MainWindow.mainPane.getItems().contains(MainWindow.rightBar)){
+            MainWindow.rightBar.addToPane();
+        }
+        
+        // Move all tabs from left bar to right bar
+        ArrayList<Tab> tabsToMove = new ArrayList<>(MainWindow.leftBar.getTabs());
+        for(Tab tab : tabsToMove){
+            MainWindow.leftBar.getTabs().remove(tab);
+            MainWindow.rightBar.getTabs().add(tab);
+        }
+        
+        // Ensure right bar has proper width
+        if(MainWindow.rightBar.getWidthByDivider() <= 50){
+            MainWindow.rightBar.setMaxWidth(MAX_WIDTH);
+            MainWindow.rightBar.setWidthByEditingDivider(DEFAULT_WIDTH);
+        }
+        
+        // Hide the empty left bar (using 1 instead of 0 to avoid GTK warnings)
+        if(MainWindow.leftBar.getTabs().isEmpty() && MainWindow.mainPane.getItems().contains(MainWindow.leftBar)){
+            MainWindow.leftBar.setMaxWidth(1);
+            MainWindow.leftBar.setWidthByEditingDivider(1);
+        }
+    }
+    
+    public void restoreDefaultWidth(){
+        if(MainWindow.mainPane.getItems().contains(this)){
+            setMaxWidth(MAX_WIDTH);
+            setWidthByEditingDivider(DEFAULT_WIDTH);
+            wasHidden = false;
+        }
+    }
+    
+    public void minimizeWidth(){
+        if(MainWindow.mainPane.getItems().contains(this) && !getTabs().isEmpty()){
+            setWidthByEditingDivider(50);
+        }
+    }
+    
     private boolean wasHidden = false;
     private double savedWidth = DEFAULT_WIDTH;
     
@@ -303,10 +377,11 @@ public class SideBar extends TabPane {
         if(!getTabs().isEmpty()){
             if(MainWindow.mainPane.getItems().contains(this)){
                 if(!wasHidden){
-                    // Hide the sidebar by setting width to 0
+                    // Hide the sidebar by setting width to minimal value
+                    // Using 1 instead of 0 to avoid GTK warnings on Linux about invalid dimensions
                     savedWidth = getWidthByDivider();
-                    setWidthByEditingDivider(0);
-                    setMaxWidth(0);
+                    setWidthByEditingDivider(1);
+                    setMaxWidth(1);
                     wasHidden = true;
                 }else{
                     // Show the sidebar by restoring saved width
