@@ -160,6 +160,7 @@ if(os.windows){
                         "mkdir -p ./AutoPackage/debian/DEBIAN ./AutoPackage/other/pdf4teachers ;" +
                         "dpkg-deb -x ./jpackage/pdf4teachers_" + version + "_amd64.deb ./AutoPackage/debian/ ;" +
                         "dpkg-deb -e ./jpackage/pdf4teachers_" + version + "_amd64.deb ./AutoPackage/debian/DEBIAN ;" +
+                        "sed -i 's/libasound2t64/libasound2/g' ./AutoPackage/debian/DEBIAN/control ;" +
                         "cp ../distribution/linux/PDF4Teachers.png ./AutoPackage/debian/opt/pdf4teachers/lib/PDF4Teachers.png ;" +
                         "cp ../distribution/linux/pdf4teachers.desktop ./AutoPackage/debian/opt/pdf4teachers/lib/pdf4teachers-PDF4Teachers.desktop ;" +
                         "dpkg-deb -Z xz -b ./AutoPackage/debian/ ./AutoPackage/PDF4Teachers-Linux-" + version + ".deb ;" +
