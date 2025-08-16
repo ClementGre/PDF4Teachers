@@ -64,8 +64,9 @@ public class TR {
         }else{
             try{ // Load the locale from user files
                 Log.d("Loading locale " + locale.toString() + " from user files...");
-                FileInputStream fis = new FileInputStream(getLocaleFile(locale));
-                return new PropertyResourceBundle(fis);
+                try(FileInputStream fis = new FileInputStream(getLocaleFile(locale))){
+                    return new PropertyResourceBundle(fis);
+                }
             }catch(Exception e){
                 Log.eNotified(e, "Unable to load translation in user files, trying to load from ressource...");
                 return getBundleByLocaleInCode(locale);
@@ -285,10 +286,9 @@ public class TR {
     // [2] : translated translations
     public static int[] getTranslationFileStats(File file){
         
-        try{
-            FileInputStream fileInputStream = new FileInputStream(file);
+        try(FileInputStream fileInputStream = new FileInputStream(file);
             InputStreamReader inputStream = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
-            BufferedReader reader = new BufferedReader(inputStream);
+            BufferedReader reader = new BufferedReader(inputStream)){
             
             int total = 0;
             int translated = 0;
@@ -313,9 +313,6 @@ public class TR {
                     
                 }
             }
-            reader.close();
-            inputStream.close();
-            fileInputStream.close();
             
             return new int[]{total, translated};
             

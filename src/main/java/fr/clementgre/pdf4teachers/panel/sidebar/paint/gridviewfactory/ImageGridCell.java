@@ -171,8 +171,10 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         Graphics2D g = cropped.createGraphics();
     
         image.getExifData().getRotation().applyTransformToGraphics2D(g, renderSize, renderSize);
-        g.drawImage(getImageSquare(ImageIO.read(new FileInputStream(file))),
-                    0, 0, renderSize, renderSize, null);
+        try(FileInputStream fis = new FileInputStream(file)){
+            g.drawImage(getImageSquare(ImageIO.read(fis)),
+                        0, 0, renderSize, renderSize, null);
+        }
         
         g.dispose();
         return SwingFXUtils.toFXImage(cropped, null);

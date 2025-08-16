@@ -60,10 +60,9 @@ public class Config {
         if(file == null) return;
         
         File safeFile = FilesUtils.toSafePath(file);
-        InputStream input = new FileInputStream(safeFile);
-        base = yaml.load(input);
-        input.close();
-        
+        try(InputStream input = new FileInputStream(safeFile)){
+            base = yaml.load(input);
+        }
         
         if(base == null) base = new HashMap<>();
     }
@@ -71,24 +70,24 @@ public class Config {
     public void save() throws IOException{
         if(file == null) return;
         File safeFile = FilesUtils.toSafePath(file);
-        Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8);
-        yaml.dump(base, output);
-        output.close();
+        try(Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8)){
+            yaml.dump(base, output);
+        }
     }
     
     public void saveTo(File file) throws IOException{
         File safeFile = FilesUtils.toSafePath(file);
-        Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8);
-        yaml.dump(base, output);
-        output.close();
+        try(Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8)){
+            yaml.dump(base, output);
+        }
     }
     
     public void saveToDestFile() throws IOException{
         if(destFile == null) return;
         File safeFile = FilesUtils.toSafePath(destFile);
-        Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8);
-        yaml.dump(base, output);
-        output.close();
+        try(Writer output = new OutputStreamWriter(new FileOutputStream(safeFile), StandardCharsets.UTF_8)){
+            yaml.dump(base, output);
+        }
     }
     
     public String getName(){

@@ -188,8 +188,7 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     private void loadNames(File file){
         if(!file.exists()) return;
         
-        try{
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+        try(BufferedReader reader = new BufferedReader(new FileReader(file))){
             String line = reader.readLine();
             
             while(line != null){
@@ -197,7 +196,6 @@ public class SplitWindow extends AlternativeWindow<VBox> {
                     names.appendText((names.getText().endsWith("\n") || names.getText().isEmpty() ? "" : "\n") + line);
                 line = reader.readLine();
             }
-            reader.close();
             
         }catch(IOException e){
             Log.eNotified(e);

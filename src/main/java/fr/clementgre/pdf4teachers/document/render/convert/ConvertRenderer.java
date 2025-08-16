@@ -134,50 +134,49 @@ public class ConvertRenderer {
                     Log.eNotified(e);
                 }
                 
-                PDPageContentStream contentStream = new PDPageContentStream(convertedFile.document, page, PDPageContentStream.AppendMode.APPEND, true, true);
-                
-                /////////////// DEFINE IMAGE SIZE AND SHIFT ON PAGE + IMAGE DEFINITION ///////////////////
-                
-                // define image size on page by maximizing the width
-                double byWidthFactor = pageWidth / pdImage.getWidth();
-                double height = pdImage.getHeight() * byWidthFactor;
-                double width = pageWidth;
-                
-                if(height > pageHeight){
-                    // the height is to big, we need to maximize by height and not by width
-                    double byHeightFactor = pageHeight / pdImage.getHeight();
-                    width = (float) (pdImage.getWidth() * byHeightFactor);
-                    height = pageHeight;
+                try(PDPageContentStream contentStream = new PDPageContentStream(convertedFile.document, page, PDPageContentStream.AppendMode.APPEND, true, true)){
                     
-                    // resize image only if we don't adapt
-                    if(!convertPane.definition.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage"))){
-                        // set image resolution by height
-                        if(convertPane.height < pdImage.getHeight()){ // don't redefine size if the image has a less quality than we want, we want to reduce image size, not increase it
-                            int imagePixelsWidth = (int) (((double) pdImage.getWidth()) / pdImage.getHeight() * convertPane.height); // calculate image resolution width
-                            // resize image
-                            pdImage = JPEGFactory.createFromImage(convertedFile.document, scaleImage(pdImage.getImage(), imagePixelsWidth, convertPane.height));
+                    /////////////// DEFINE IMAGE SIZE AND SHIFT ON PAGE + IMAGE DEFINITION ///////////////////
+                    
+                    // define image size on page by maximizing the width
+                    double byWidthFactor = pageWidth / pdImage.getWidth();
+                    double height = pdImage.getHeight() * byWidthFactor;
+                    double width = pageWidth;
+                    
+                    if(height > pageHeight){
+                        // the height is to big, we need to maximize by height and not by width
+                        double byHeightFactor = pageHeight / pdImage.getHeight();
+                        width = (float) (pdImage.getWidth() * byHeightFactor);
+                        height = pageHeight;
+                        
+                        // resize image only if we don't adapt
+                        if(!convertPane.definition.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage"))){
+                            // set image resolution by height
+                            if(convertPane.height < pdImage.getHeight()){ // don't redefine size if the image has a less quality than we want, we want to reduce image size, not increase it
+                                int imagePixelsWidth = (int) (((double) pdImage.getWidth()) / pdImage.getHeight() * convertPane.height); // calculate image resolution width
+                                // resize image
+                                pdImage = JPEGFactory.createFromImage(convertedFile.document, scaleImage(pdImage.getImage(), imagePixelsWidth, convertPane.height));
+                            }
+                        }
+                    }else{
+                        // resize image only if we don't adapt
+                        if(!convertPane.definition.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage"))){
+                            // set image resolution by width
+                            if(convertPane.width < pdImage.getWidth()){ // don't redefine size if the image has a less quality than we want, we want to reduce image size, not increase it
+                                int imagePixelsHeight = (int) (((double) pdImage.getHeight()) / pdImage.getWidth() * convertPane.width); // calculate image resolution height
+                                // resize image
+                                pdImage = JPEGFactory.createFromImage(convertedFile.document, scaleImage(pdImage.getImage(), convertPane.width, imagePixelsHeight));
+                            }
                         }
                     }
-                }else{
-                    // resize image only if we don't adapt
-                    if(!convertPane.definition.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage"))){
-                        // set image resolution by width
-                        if(convertPane.width < pdImage.getWidth()){ // don't redefine size if the image has a less quality than we want, we want to reduce image size, not increase it
-                            int imagePixelsHeight = (int) (((double) pdImage.getHeight()) / pdImage.getWidth() * convertPane.width); // calculate image resolution height
-                            // resize image
-                            pdImage = JPEGFactory.createFromImage(convertedFile.document, scaleImage(pdImage.getImage(), convertPane.width, imagePixelsHeight));
-                        }
-                    }
+                    
+                    int borderX = (int) ((pageWidth - width) / 2d);
+                    int borderY = (int) ((pageHeight - height) / 2d);
+                    
+                    ///////////////////////////////////////////////////////////////////////
+                    
+                    contentStream.drawImage(pdImage, borderX, borderY, (float) width, (float) height);
                 }
-                
-                int borderX = (int) ((pageWidth - width) / 2d);
-                int borderY = (int) ((pageHeight - height) / 2d);
-                
-                ///////////////////////////////////////////////////////////////////////
-                
-                contentStream.drawImage(pdImage, borderX, borderY, (float) width, (float) height);
-                
-                contentStream.close();
                 convertedFile.addPage(page);
             }else if(isValidFile(file)){
                 convertedFile.addPage(new PDPage(defaultPageSize));

@@ -56,48 +56,46 @@ public class SACocheWriter {
             File dest = getDestinationFile();
             if(dest == null) return;
             
-            BufferedWriter writer  = new BufferedWriter(new FileWriter(dest, Charset.defaultCharset()));
-            ICSVWriter csvWriter = new CSVWriterBuilder(writer).withSeparator(';').build();
-           
-            // Write Student ids
-            csvWriter.writeNext(Stream.concat(Stream.of(""), studentGrades.stream().map(s -> Long.toString(s.studentId()))).toArray(String[]::new));
-            
-            // Write Skills with values
-            LinkedHashMap<Long, String> notationIds = assessment.getNotationsWithDefaults().stream().collect(Collectors.toMap(Notation::getId, Notation::getKeyboardChar, (x, y) -> y, LinkedHashMap::new));
-            
-            assessment.getSkills().forEach(skill -> {
-                csvWriter.writeNext(Stream.concat(Stream.concat(
-                                Stream.of(Long.toString(skill.getId())), // First column: notations ids
-                                studentGrades.stream()
-                                        .map(sg -> sg.skills().stream().filter(s -> s.getSkillId() == skill.getId()).findAny().orElse(null)) // map to matching skill
-                                        .map(s -> s == null ? "" : notationIds.get(s.getNotationId()))), // map to matching notation keyboard char
-                                Stream.of(skill.getAcronym() + " [] [] " + skill.getName())).toArray(String[]::new)); // Last column: notations names
-            });
-    
-            // Write Student names
-            csvWriter.writeNext(Stream.concat(Stream.of(""), studentGrades.stream().map(StudentGrades::studentName)).toArray(String[]::new));
-            
-            // Assessment meta data
-            csvWriter.writeNext(new String[]{});
-            csvWriter.writeNext(new String[]{});
-            csvWriter.writeNext(new String[]{assessment.getClasz()});
-            csvWriter.writeNext(new String[]{assessment.getDate()});
-            csvWriter.writeNext(new String[]{assessment.getName()});
-            csvWriter.writeNext(new String[]{});
-            csvWriter.writeNext(new String[]{"CODAGES AUTORISÉS : " + String.join(",", notationIds.values())});
-            csvWriter.writeNext(new String[]{});
-            
-            // Notations
-            // Do not write the notations because it can give false information to the SACoche parser. (ex: "2";"R";... can put an R to the skill of ID 2)
-            /*csvWriter.writeNext(new String[]{"PDF4Teachers"});
-            csvWriter.writeNext(new String[]{"CLAVIER", "SIGLE", "LEGENDE", "IMAGE"});
-            assessment.getNotations().forEach(notation -> {
-                csvWriter.writeNext(new String[]{notation.getKeyboardChar(), notation.getAcronym(), notation.getName(),
-                        (assessment.getNotationType() == Notation.NotationType.ICON ? "data:image/gif;base64," : "") + notation.getData()});
-            });*/
-    
-            csvWriter.close();
-            writer.close();
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter(dest, Charset.defaultCharset()));
+                ICSVWriter csvWriter = new CSVWriterBuilder(writer).withSeparator(';').build()){
+                
+                // Write Student ids
+                csvWriter.writeNext(Stream.concat(Stream.of(""), studentGrades.stream().map(s -> Long.toString(s.studentId()))).toArray(String[]::new));
+                
+                // Write Skills with values
+                LinkedHashMap<Long, String> notationIds = assessment.getNotationsWithDefaults().stream().collect(Collectors.toMap(Notation::getId, Notation::getKeyboardChar, (x, y) -> y, LinkedHashMap::new));
+                
+                assessment.getSkills().forEach(skill -> {
+                    csvWriter.writeNext(Stream.concat(Stream.concat(
+                                    Stream.of(Long.toString(skill.getId())), // First column: notations ids
+                                    studentGrades.stream()
+                                            .map(sg -> sg.skills().stream().filter(s -> s.getSkillId() == skill.getId()).findAny().orElse(null)) // map to matching skill
+                                            .map(s -> s == null ? "" : notationIds.get(s.getNotationId()))), // map to matching notation keyboard char
+                                    Stream.of(skill.getAcronym() + " [] [] " + skill.getName())).toArray(String[]::new)); // Last column: notations names
+                });
+        
+                // Write Student names
+                csvWriter.writeNext(Stream.concat(Stream.of(""), studentGrades.stream().map(StudentGrades::studentName)).toArray(String[]::new));
+                
+                // Assessment meta data
+                csvWriter.writeNext(new String[]{});
+                csvWriter.writeNext(new String[]{});
+                csvWriter.writeNext(new String[]{assessment.getClasz()});
+                csvWriter.writeNext(new String[]{assessment.getDate()});
+                csvWriter.writeNext(new String[]{assessment.getName()});
+                csvWriter.writeNext(new String[]{});
+                csvWriter.writeNext(new String[]{"CODAGES AUTORISÉS : " + String.join(",", notationIds.values())});
+                csvWriter.writeNext(new String[]{});
+                
+                // Notations
+                // Do not write the notations because it can give false information to the SACoche parser. (ex: "2";"R";... can put an R to the skill of ID 2)
+                /*csvWriter.writeNext(new String[]{"PDF4Teachers"});
+                csvWriter.writeNext(new String[]{"CLAVIER", "SIGLE", "LEGENDE", "IMAGE"});
+                assessment.getNotations().forEach(notation -> {
+                    csvWriter.writeNext(new String[]{notation.getKeyboardChar(), notation.getAcronym(), notation.getName(),
+                            (assessment.getNotationType() == Notation.NotationType.ICON ? "data:image/gif;base64," : "") + notation.getData()});
+                });*/
+            }
     
             DialogBuilder.showAlertWithOpenDirOrFileButton(TR.tr("actions.export.completedMessage"), TR.tr("actions.export.completedMessage"),
                     TR.tr("actions.export.fileAvailable"), dest.getParentFile().getAbsolutePath(), dest.getAbsolutePath());
