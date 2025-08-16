@@ -290,4 +290,25 @@ public class SideBar extends TabPane {
         MainWindow.leftBar.loadTabsList(Main.syncUserData.leftBarOrganization);
         MainWindow.rightBar.loadTabsList(Main.syncUserData.rightBarOrganization);
     }
+    
+    public static void toggleSideBarsVisibility(){
+        MainWindow.leftBar.toggleVisibility();
+        MainWindow.rightBar.toggleVisibility();
+    }
+    
+    private boolean wasHidden = false;
+    
+    public void toggleVisibility(){
+        if(!getTabs().isEmpty()){
+            if(MainWindow.mainPane.getItems().contains(this)){
+                // Hide the sidebar
+                removeToPane();
+                wasHidden = true;
+            }else if(wasHidden){
+                // Show the sidebar
+                addToPane();
+                wasHidden = false;
+            }
+        }
+    }
 }
