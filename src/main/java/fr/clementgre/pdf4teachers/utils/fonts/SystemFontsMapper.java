@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -39,7 +39,12 @@ public class SystemFontsMapper {
     private final HashMap<String, FontPaths> systemFontMap = new HashMap<>();
     
     public static String[] getSystemFontNames(){
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+        try{
+            return GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+        }catch(UnsatisfiedLinkError e){
+            Log.eNotified(e);
+            return new String[0];
+        }
     }
     
     private String[] getSystemFontsDirs(){

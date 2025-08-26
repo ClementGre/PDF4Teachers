@@ -3,9 +3,4 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="21" />
   </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="PDF4Teachers.main" options="--add-exports javafx.graphics/com.sun.javafx.util=fr.clementgre.pdf4teachers" />
-    </option>
-  </component>
 </project>
