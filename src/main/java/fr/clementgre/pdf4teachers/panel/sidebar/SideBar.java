@@ -323,10 +323,9 @@ public class SideBar extends TabPane {
             MainWindow.leftBar.setWidthByEditingDivider(DEFAULT_WIDTH);
         }
         
-        // Hide the empty right bar (using 1 instead of 0 to avoid GTK warnings)
+        // Remove the empty right bar from the pane completely
         if(MainWindow.rightBar.getTabs().isEmpty() && MainWindow.mainPane.getItems().contains(MainWindow.rightBar)){
-            MainWindow.rightBar.setMaxWidth(1);
-            MainWindow.rightBar.setWidthByEditingDivider(1);
+            MainWindow.mainPane.getItems().remove(MainWindow.rightBar);
         }
     }
     
@@ -349,10 +348,9 @@ public class SideBar extends TabPane {
             MainWindow.rightBar.setWidthByEditingDivider(DEFAULT_WIDTH);
         }
         
-        // Hide the empty left bar (using 1 instead of 0 to avoid GTK warnings)
+        // Remove the empty left bar from the pane completely
         if(MainWindow.leftBar.getTabs().isEmpty() && MainWindow.mainPane.getItems().contains(MainWindow.leftBar)){
-            MainWindow.leftBar.setMaxWidth(1);
-            MainWindow.leftBar.setWidthByEditingDivider(1);
+            MainWindow.mainPane.getItems().remove(MainWindow.leftBar);
         }
     }
     
@@ -361,12 +359,6 @@ public class SideBar extends TabPane {
             setMaxWidth(MAX_WIDTH);
             setWidthByEditingDivider(DEFAULT_WIDTH);
             wasHidden = false;
-        }
-    }
-    
-    public void minimizeWidth(){
-        if(MainWindow.mainPane.getItems().contains(this) && !getTabs().isEmpty()){
-            setWidthByEditingDivider(50);
         }
     }
     

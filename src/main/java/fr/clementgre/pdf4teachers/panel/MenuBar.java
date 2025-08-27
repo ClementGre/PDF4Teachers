@@ -128,14 +128,17 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem view2RestoreDefaultSidebars = createMenuItem(TR.tr("menuBar.view.restoreDefaultSidebars"), SVGPathIcons.REDO, null,
             TR.tr("menuBar.view.restoreDefaultSidebars.tooltip"));
     
-    private final MenuItem view3MinimizeSidebars = createMenuItem(TR.tr("menuBar.view.minimizeSidebars"), SVGPathIcons.EXCHANGE, null,
-            TR.tr("menuBar.view.minimizeSidebars.tooltip"));
-    
     private final MenuItem view4MoveAllTabsLeft = createMenuItem(TR.tr("menuBar.view.moveAllTabsLeft"), null, null,
             TR.tr("menuBar.view.moveAllTabsLeft.tooltip"));
     
     private final MenuItem view5MoveAllTabsRight = createMenuItem(TR.tr("menuBar.view.moveAllTabsRight"), null, null,
             TR.tr("menuBar.view.moveAllTabsRight.tooltip"));
+    
+    private final MenuItem view6FullScreen = createMenuItem(TR.tr("menuBar.view.enterFullScreenMode"), SVGPathIcons.FULL_SCREEN, 
+            PlatformUtils.isMac() 
+                ? new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.META_DOWN)
+                : new KeyCodeCombination(KeyCode.F11),
+            TR.tr("menuBar.view.fullScreenMode.tooltip"));
     
     ////////// TOOLS //////////
     
@@ -180,9 +183,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             TR.tr("menuBar.tools.importEdit.tooltip"), true, false, false);
     private final MenuItem tools7ExportImportEdition4ImportGrades = createMenuItem(TR.tr("menuBar.tools.importGradeScale"), null, null,
             TR.tr("menuBar.tools.importGradeScale.tooltip"), true, false, false);
-    
-    private final MenuItem tools8FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, new KeyCodeCombination(KeyCode.F11),
-            TR.tr("menuBar.tools.fullScreenMode.tooltip"));
     
     private final Menu tools8Debug = createSubMenu(TR.tr("menuBar.tools.debug"), SVGPathIcons.COMMAND_PROMPT,
             TR.tr("menuBar.tools.debug.tooltip"), false);
@@ -232,8 +232,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         ////////// VIEW //////////
         
-        view.getItems().addAll(view1ToggleSidebars, new SeparatorMenuItem(), view2RestoreDefaultSidebars, view3MinimizeSidebars, 
-                new SeparatorMenuItem(), view4MoveAllTabsLeft, view5MoveAllTabsRight);
+        view.getItems().addAll(view1ToggleSidebars, new SeparatorMenuItem(), view2RestoreDefaultSidebars, 
+                new SeparatorMenuItem(), view4MoveAllTabsLeft, view5MoveAllTabsRight,
+                new SeparatorMenuItem(), view6FullScreen);
         
         ////////// TOOLS //////////
         
@@ -248,7 +249,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages, tools4PdfTools,
                 new SeparatorMenuItem(), tools5DeleteAllEdits, tools6SameNameEditions, tools7ExportImportEdition,
-                new SeparatorMenuItem(), tools8FullScreen,
                 new SeparatorMenuItem(), tools8Debug);
         
         ////////// HELP //////////
@@ -368,6 +368,23 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         ////////// VIEW //////////
         
+        view.addEventHandler(Menu.ON_SHOWING, (e) -> {
+            // Disable "Move All Tabs to Left" if all tabs are already on the left
+            boolean hasRightTabs = !MainWindow.rightBar.getTabs().isEmpty();
+            boolean hasLeftTabs = !MainWindow.leftBar.getTabs().isEmpty();
+            
+            view4MoveAllTabsLeft.setDisable(!hasRightTabs);
+            view5MoveAllTabsRight.setDisable(!hasLeftTabs);
+            
+            // Update fullscreen text dynamically
+            String fullscreenText = Main.window.isFullScreen() 
+                ? TR.tr("menuBar.view.exitFullScreenMode") 
+                : TR.tr("menuBar.view.enterFullScreenMode");
+            
+            if(view6FullScreen instanceof NodeMenuItem menu) menu.setName(fullscreenText);
+            else view6FullScreen.setText(fullscreenText);
+        });
+        
         view1ToggleSidebars.setOnAction(e -> SideBar.toggleSideBarsVisibility());
         
         view2RestoreDefaultSidebars.setOnAction(e -> {
@@ -376,14 +393,11 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             // TODO: Restore default tab organization
         });
         
-        view3MinimizeSidebars.setOnAction(e -> {
-            MainWindow.leftBar.minimizeWidth();
-            MainWindow.rightBar.minimizeWidth();
-        });
-        
         view4MoveAllTabsLeft.setOnAction(e -> SideBar.moveAllTabsToLeft());
         
         view5MoveAllTabsRight.setOnAction(e -> SideBar.moveAllTabsToRight());
+        
+        view6FullScreen.setOnAction(e -> Main.window.setFullScreen(!Main.window.isFullScreen()));
         
         ////////// TOOLS //////////
         
@@ -445,8 +459,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         tools7ExportImportEdition2ExportGrades.setOnAction((e) -> EditionExporter.showExportDialog(true));
         tools7ExportImportEdition3ImportAll.setOnAction((e) -> EditionExporter.showImportDialog(false));
         tools7ExportImportEdition4ImportGrades.setOnAction((e) -> EditionExporter.showImportDialog(true));
-        
-        tools8FullScreen.setOnAction((e) -> Main.window.setFullScreen(!Main.window.isFullScreen()));
         
         tools8Debug1OpenConsole.setOnAction((e) -> new LogWindow());
         tools8Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openFile(Main.dataFolder));
@@ -516,8 +528,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             NodeMenuItem.setupMenu(tools7ExportImportEdition);
             NodeMenuItem.setupMenu(tools8Debug);
             NodeMenuItem.setupMenu(help);
-            // edit is edited dynamically
+            // edit and view are edited dynamically
             NodeMenuItem.setupDynamicMenu(edit);
+            NodeMenuItem.setupDynamicMenu(view);
             
             getMenus().addAll(file, edit, view, tools, help, settings, about);
             
