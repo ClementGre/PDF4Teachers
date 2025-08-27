@@ -102,15 +102,6 @@ public class KeyboardShortcuts {
         }));
         
         /******************************/
-        /**** Interface shortcuts *****/
-        /******************************/
-        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.interface.toggleSidebars"),
-                new KeyCodeCombination(KeyCode.B, KeyCodeCombination.SHORTCUT_DOWN), e -> {
-            SideBar.toggleSideBarsVisibility();
-            e.consume();
-        }));
-        
-        /******************************/
         /**** Navigation shortcuts ****/
         /******************************/
         //  +/- or arrows with shortcut for zoom and reset zoom
