@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -8,8 +8,6 @@ package fr.clementgre.pdf4teachers.utils.dialogs;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
-import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -124,9 +122,8 @@ public class FilesChooserManager{
         File file = chooser.showSaveDialog(Main.window);
 
         // On MacOS, the os save dialog removes the extension -> we add it back
-        File finalFile = file;
-        if(Arrays.stream(extensions).noneMatch(ext -> finalFile.getName().endsWith(ext))){
-            file = new File(file.getAbsolutePath() + chooser.getSelectedExtensionFilter().getExtensions().getFirst());
+        if(file != null && Arrays.stream(extensions).noneMatch(ext -> file.getName().endsWith(ext))){
+            return new File(file.getAbsolutePath() + chooser.getSelectedExtensionFilter().getExtensions().getFirst());
         }
         return file;
     }
