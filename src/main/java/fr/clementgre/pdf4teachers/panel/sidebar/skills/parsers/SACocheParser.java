@@ -86,12 +86,13 @@ public class SACocheParser {
     
     private SkillsAssessment getFromCsv() throws IOException, CsvException{
     
-        BufferedReader reader = new BufferedReader(new FileReader(file, charset == null ? Charset.defaultCharset() : charset));
-        CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
-        CSVReader csvReader = new CSVReaderBuilder(reader).withCSVParser(parser).build();
-        List<String[]> lines = csvReader.readAll();
-        reader.close();
-        csvReader.close();
+        List<String[]> lines;
+        try(BufferedReader reader = new BufferedReader(new FileReader(file, charset == null ? Charset.defaultCharset() : charset));
+            CSVReader csvReader = new CSVReaderBuilder(reader)
+                    .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
+                    .build()){
+            lines = csvReader.readAll();
+        }
         
         SkillsAssessment assessment = new SkillsAssessment();
         assessment.setNotationType(Notation.NotationType.ICON);

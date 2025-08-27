@@ -48,7 +48,9 @@ public class ExportRenderer {
             }
         }
         
-        new PDStream(doc, new FileInputStream(pdfFile), COSName.FLATE_DECODE);
+        try(FileInputStream fis = new FileInputStream(pdfFile)){
+            new PDStream(doc, fis, COSName.FLATE_DECODE);
+        }
         doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
         
         TextRenderer textRenderer = new TextRenderer(doc);
@@ -63,66 +65,65 @@ public class ExportRenderer {
             
             PDPage page = doc.getPage(pageNumber);
             var appendMode = excludeOriginalContent ? PDPageContentStream.AppendMode.OVERWRITE : PDPageContentStream.AppendMode.APPEND;
-            PDPageContentStream contentStream = new PDPageContentStream(doc, page, appendMode, true, true);
-            page.setBleedBox(page.getCropBox());
-            
-            float startX = page.getCropBox().getLowerLeftX();
-            float startY = page.getCropBox().getLowerLeftY();
-            float pageHeight = page.getCropBox().getHeight();
-            float pageWidth = page.getCropBox().getWidth();
-            float pageRealHeight = page.getCropBox().getHeight();
-            float pageRealWidth = page.getCropBox().getWidth();
-            // ROTATE PAGES ADAPT
-            if(page.getRotation() == 90 || page.getRotation() == 270){
-                startY = page.getCropBox().getLowerLeftX();
-                startX = page.getCropBox().getLowerLeftY();
+            try(PDPageContentStream contentStream = new PDPageContentStream(doc, page, appendMode, true, true)){
+                page.setBleedBox(page.getCropBox());
                 
-                pageHeight = page.getCropBox().getWidth();
-                pageWidth = page.getCropBox().getHeight();
-                pageRealHeight = page.getCropBox().getWidth();
-                pageRealWidth = page.getCropBox().getHeight();
-            }
-            
-            // ROTATE PAGES ADAPT
-            Matrix csTransform = switch(page.getRotation()){
-                case 90 -> Matrix.getRotateInstance(Math.PI / 2.0, startY + pageHeight, startX);
-                case 180 -> Matrix.getRotateInstance(Math.PI, pageWidth + startX, pageHeight + startY);
-                case 270 -> Matrix.getRotateInstance(Math.PI * 1.5, startY, startX + pageWidth);
-                default -> Matrix.getTranslateInstance(startX, startY);
-            };
-            
-            contentStream.transform(csTransform);
-            PageSpecs pageSpecs = new PageSpecs(pageRealWidth, pageRealHeight, csTransform);
-            
-            for(Element element : elements){
+                float startX = page.getCropBox().getLowerLeftX();
+                float startY = page.getCropBox().getLowerLeftY();
+                float pageHeight = page.getCropBox().getHeight();
+                float pageWidth = page.getCropBox().getWidth();
+                float pageRealHeight = page.getCropBox().getHeight();
+                float pageRealWidth = page.getCropBox().getWidth();
+                // ROTATE PAGES ADAPT
+                if(page.getRotation() == 90 || page.getRotation() == 270){
+                    startY = page.getCropBox().getLowerLeftX();
+                    startX = page.getCropBox().getLowerLeftY();
+                    
+                    pageHeight = page.getCropBox().getWidth();
+                    pageWidth = page.getCropBox().getHeight();
+                    pageRealHeight = page.getCropBox().getWidth();
+                    pageRealWidth = page.getCropBox().getHeight();
+                }
                 
-                if(element.getPageNumber() != pageNumber) continue;
+                // ROTATE PAGES ADAPT
+                Matrix csTransform = switch(page.getRotation()){
+                    case 90 -> Matrix.getRotateInstance(Math.PI / 2.0, startY + pageHeight, startX);
+                    case 180 -> Matrix.getRotateInstance(Math.PI, pageWidth + startX, pageHeight + startY);
+                    case 270 -> Matrix.getRotateInstance(Math.PI * 1.5, startY, startX + pageWidth);
+                    default -> Matrix.getTranslateInstance(startX, startY);
+                };
                 
-                if(element instanceof TextElement tElement){
-                    if(textElements)
-                        if(!textElementRenderer.renderElement(tElement, contentStream, page, pageSpecs)){
-                            doc.close(); return false;
-                        }
-                }else if(element instanceof GradeElement gElement){
-                    if(gradesElements)
-                        if(!gradeElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
-                            doc.close(); return false;
-                        }
-                }else if(element instanceof ImageElement gElement){
-                    if(drawElements)
-                        imageElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight);
-                }else if(element instanceof VectorElement gElement){
-                    if(drawElements)
-                        vectorElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight);
-                }else if(element instanceof SkillTableElement gElement){
-                    if(skillElements)
-                        if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
-                            doc.close(); return false;
-                        }
+                contentStream.transform(csTransform);
+                PageSpecs pageSpecs = new PageSpecs(pageRealWidth, pageRealHeight, csTransform);
+                
+                for(Element element : elements){
+                    
+                    if(element.getPageNumber() != pageNumber) continue;
+                    
+                    if(element instanceof TextElement tElement){
+                        if(textElements)
+                            if(!textElementRenderer.renderElement(tElement, contentStream, page, pageSpecs)){
+                                doc.close(); return false;
+                            }
+                    }else if(element instanceof GradeElement gElement){
+                        if(gradesElements)
+                            if(!gradeElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
+                                doc.close(); return false;
+                            }
+                    }else if(element instanceof ImageElement gElement){
+                        if(drawElements)
+                            imageElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight);
+                    }else if(element instanceof VectorElement gElement){
+                        if(drawElements)
+                            vectorElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight);
+                    }else if(element instanceof SkillTableElement gElement){
+                        if(skillElements)
+                            if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
+                                doc.close(); return false;
+                            }
+                    }
                 }
             }
-            
-            contentStream.close();
         }
         
         

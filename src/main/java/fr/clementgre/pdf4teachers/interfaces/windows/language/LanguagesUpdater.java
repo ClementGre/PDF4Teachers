@@ -132,6 +132,7 @@ public class LanguagesUpdater {
     public void updateStats(CallBack callBack){
         new Thread(() -> {
             String uuid = Log.doDebug() ? "DEBUG" : MainWindow.userData.uuid;
+            HttpURLConnection con = null;
             try{
                 URL url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime +
                         "&starts=" + MainWindow.userData.startsCount +
@@ -141,11 +142,13 @@ public class LanguagesUpdater {
                 if(!Main.settings.sendStats.getValue()){
                     url = new URL("https://api.pdf4teachers.org/startupdate/?time=0&starts=0&version=" + Main.VERSION + "&id=" + uuid);
                 }
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con = (HttpURLConnection) url.openConnection();
                 con.setDoOutput(false);
                 Log.d("updating stats with response code " + con.getResponseCode());
             }catch(IOException e){
                 Log.eNotified(e);
+            }finally{
+                if(con != null) con.disconnect();
             }
             if(callBack != null) callBack.call();
         }).start();
@@ -157,6 +160,7 @@ public class LanguagesUpdater {
         if(!hideFirstDialogState) loadingAlert.show();
         
         new Thread(() -> {
+            HttpURLConnection con = null;
             try{
                 URL url = new URL("https://api.pdf4teachers.org/startupdate/");
                 if(provideData){
@@ -171,7 +175,7 @@ public class LanguagesUpdater {
                         url = new URL("https://api.pdf4teachers.org/startupdate/?time=0&starts=0&version=" + Main.VERSION + "&id=" + uuid);
                     }
                 }
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con = (HttpURLConnection) url.openConnection();
                 con.setDoOutput(true);
                 con.setRequestProperty("Accept", "application/json");
                 con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -180,42 +184,42 @@ public class LanguagesUpdater {
                 Log.d("updating language with response code " + responseCode);
                 if(responseCode != 200) Log.d(con.getResponseMessage());
                 
-                JsonFactory jfactory = new JsonFactory();
-                JsonParser jParser = jfactory.createParser(con.getInputStream());
-                
                 List<Language> languages = new ArrayList<>();
-                Language currentLanguage = null;
                 
-                int indentLevel = 0;
-                JsonToken token; // Current Token (START_OBJECT, END_OBJECT, VALUE_STRING, FIELD_NAME)
-                while((token = jParser.nextToken()) != null){
-                    String jsonField = jParser.getCurrentName(); // Current json Object or Field
-                    //jParser.getText(); jParser.getIntValue()  // Current value of Field or Object ({, }, [, ])
+                JsonFactory jfactory = new JsonFactory();
+                try(JsonParser jParser = jfactory.createParser(con.getInputStream())){
+                    Language currentLanguage = null;
                     
-                    if(indentLevel == 1 && token == JsonToken.FIELD_NAME){
-                        currentLanguage = new Language();
-                        currentLanguage.setName(jsonField);
+                    int indentLevel = 0;
+                    JsonToken token; // Current Token (START_OBJECT, END_OBJECT, VALUE_STRING, FIELD_NAME)
+                    while((token = jParser.nextToken()) != null){
+                        String jsonField = jParser.getCurrentName(); // Current json Object or Field
+                        //jParser.getText(); jParser.getIntValue()  // Current value of Field or Object ({, }, [, ])
                         
-                    }else if(indentLevel == 2 && (token == JsonToken.VALUE_STRING || token == JsonToken.VALUE_NUMBER_INT)){
-                        assert currentLanguage != null;
-                        switch(jsonField){
-                            case "release" -> currentLanguage.setRelease(jParser.getText());
-                            case "version" -> currentLanguage.setVersion(jParser.getIntValue());
-                            case "name" -> currentLanguage.setDisplayName(jParser.getText());
+                        if(indentLevel == 1 && token == JsonToken.FIELD_NAME){
+                            currentLanguage = new Language();
+                            currentLanguage.setName(jsonField);
+                            
+                        }else if(indentLevel == 2 && (token == JsonToken.VALUE_STRING || token == JsonToken.VALUE_NUMBER_INT)){
+                            assert currentLanguage != null;
+                            switch(jsonField){
+                                case "release" -> currentLanguage.setRelease(jParser.getText());
+                                case "version" -> currentLanguage.setVersion(jParser.getIntValue());
+                                case "name" -> currentLanguage.setDisplayName(jParser.getText());
+                            }
+                        }else if(indentLevel == 3 && token == JsonToken.VALUE_STRING){
+                            assert currentLanguage != null;
+                            currentLanguage.pushUrl(Map.entry(jsonField, jParser.getText()));
                         }
-                    }else if(indentLevel == 3 && token == JsonToken.VALUE_STRING){
-                        assert currentLanguage != null;
-                        currentLanguage.pushUrl(Map.entry(jsonField, jParser.getText()));
+                        if(indentLevel == 2 && token == JsonToken.END_OBJECT){
+                            languages.add(currentLanguage);
+                            currentLanguage = null;
+                        }
+                        
+                        if(token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY) indentLevel++;
+                        if(token == JsonToken.END_OBJECT || token == JsonToken.END_ARRAY) indentLevel--;
                     }
-                    if(indentLevel == 2 && token == JsonToken.END_OBJECT){
-                        languages.add(currentLanguage);
-                        currentLanguage = null;
-                    }
-                    
-                    if(token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY) indentLevel++;
-                    if(token == JsonToken.END_OBJECT || token == JsonToken.END_ARRAY) indentLevel--;
                 }
-                jParser.close();
                 
                 
                 List<Language> toDownloadLanguages = new ArrayList<>();
@@ -249,6 +253,8 @@ public class LanguagesUpdater {
             }catch(IOException e){
                 Log.eNotified(e);
                 complete(callBack, new ArrayList<>());
+            }finally{
+                if(con != null) con.disconnect();
             }
             
         }, "Languages Updater").start();
