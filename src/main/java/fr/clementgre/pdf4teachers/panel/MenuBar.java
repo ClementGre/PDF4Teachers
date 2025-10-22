@@ -122,8 +122,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     
     public final Menu view = new Menu(TR.tr("menuBar.view"));
     
-    private final MenuItem view1ToggleSidebars = createMenuItem(TR.tr("menuBar.view.toggleSidebars"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.B, KeyCombination.SHORTCUT_DOWN),
-            TR.tr("menuBar.view.toggleSidebars.tooltip"));
+    private final MenuItem view1ToggleSidebars = createMenuItem(TR.tr("menuBar.view.toggleSidebars"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.B, KeyCombination.SHORTCUT_DOWN), null);
     
     private final MenuItem view2RestoreDefaultSidebars = createMenuItem(TR.tr("menuBar.view.restoreDefaultSidebars"), SVGPathIcons.REDO, null,
             TR.tr("menuBar.view.restoreDefaultSidebars.tooltip"));
@@ -376,6 +375,11 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             view4MoveAllTabsLeft.setDisable(!hasRightTabs);
             view5MoveAllTabsRight.setDisable(!hasLeftTabs);
             
+            // Update toggle sidebars text
+            String toggleSidebarsText = SideBar.areSideBarsMinimized() ? TR.tr("menuBar.view.toggleSidebars.deMinimize") : TR.tr("menuBar.view.toggleSidebars.minimize");
+            if(view1ToggleSidebars instanceof NodeMenuItem menu) menu.setName(toggleSidebarsText);
+            else view1ToggleSidebars.setText(toggleSidebarsText);
+            
             // Update fullscreen text dynamically
             String fullscreenText = Main.window.isFullScreen()
                     ? TR.tr("menuBar.view.exitFullScreenMode")
@@ -383,6 +387,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
             if(view6FullScreen instanceof NodeMenuItem menu) menu.setName(fullscreenText);
             else view6FullScreen.setText(fullscreenText);
+            
         });
         
         view1ToggleSidebars.setOnAction(e -> SideBar.toggleSideBarsMinimized());
