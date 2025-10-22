@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,10 +7,13 @@ package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class SyncUserData {
     
@@ -18,10 +21,16 @@ public class SyncUserData {
     // String, boolean, long, double, List, HashMap, LinkedHashMap
     
     @UserDataObject(path = "barsOrganization.leftBar")
-    public List<String> leftBarOrganization = Arrays.asList("files", "text", "grades", "skills", "paint");
-    
+    public List<String> leftBarOrganization = SideBar.DEFAULT_LEFT_TABS;
     @UserDataObject(path = "barsOrganization.rightBar")
-    public List<String> rightBarOrganization = Collections.emptyList();
+    public List<String> rightBarOrganization = SideBar.DEFAULT_RIGHT_TABS;
+    
+    
+    @UserDataObject(path = "barsSizes.leftBar")
+    public double leftBarWidth = SideBar.DEFAULT_WIDTH;
+    @UserDataObject(path = "barsSizes.rightBar")
+    public double rightBarWidth = SideBar.DEFAULT_WIDTH;
+    
     
     @UserDataObject(path = "mainWindowSize.width")
     public long mainWindowWidth = 1300;
