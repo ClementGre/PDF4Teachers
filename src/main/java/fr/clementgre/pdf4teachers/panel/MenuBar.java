@@ -134,8 +134,8 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem view5MoveAllTabsRight = createMenuItem(TR.tr("menuBar.view.moveAllTabsRight"), null, null,
             TR.tr("menuBar.view.moveAllTabsRight.tooltip"));
     
-    private final MenuItem view6FullScreen = createMenuItem(TR.tr("menuBar.view.enterFullScreenMode"), SVGPathIcons.FULL_SCREEN, 
-            PlatformUtils.isMac() 
+    private final MenuItem view6FullScreen = createMenuItem(TR.tr("menuBar.view.enterFullScreenMode"), SVGPathIcons.FULL_SCREEN,
+            PlatformUtils.isMac()
                 ? new KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN, KeyCodeCombination.META_DOWN)
                 : new KeyCodeCombination(KeyCode.F11),
             TR.tr("menuBar.view.fullScreenMode.tooltip"));
@@ -232,7 +232,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         ////////// VIEW //////////
         
-        view.getItems().addAll(view1ToggleSidebars, new SeparatorMenuItem(), view2RestoreDefaultSidebars, 
+        view.getItems().addAll(view1ToggleSidebars, new SeparatorMenuItem(), view2RestoreDefaultSidebars,
                 new SeparatorMenuItem(), view4MoveAllTabsLeft, view5MoveAllTabsRight,
                 new SeparatorMenuItem(), view6FullScreen);
         
@@ -377,20 +377,19 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             view5MoveAllTabsRight.setDisable(!hasLeftTabs);
             
             // Update fullscreen text dynamically
-            String fullscreenText = Main.window.isFullScreen() 
-                ? TR.tr("menuBar.view.exitFullScreenMode") 
+            String fullscreenText = Main.window.isFullScreen()
+                    ? TR.tr("menuBar.view.exitFullScreenMode")
                 : TR.tr("menuBar.view.enterFullScreenMode");
             
             if(view6FullScreen instanceof NodeMenuItem menu) menu.setName(fullscreenText);
             else view6FullScreen.setText(fullscreenText);
         });
         
-        view1ToggleSidebars.setOnAction(e -> SideBar.toggleSideBarsVisibility());
+        view1ToggleSidebars.setOnAction(e -> SideBar.toggleSideBarsMinimized());
         
         view2RestoreDefaultSidebars.setOnAction(e -> {
-            MainWindow.leftBar.restoreDefaultWidth();
-            MainWindow.rightBar.restoreDefaultWidth();
-            // TODO: Restore default tab organization
+            SideBar.loadBarsDefaultWidths();
+            SideBar.loadDefaultBarsOrganization();
         });
         
         view4MoveAllTabsLeft.setOnAction(e -> SideBar.moveAllTabsToLeft());
