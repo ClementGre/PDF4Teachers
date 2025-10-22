@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -18,6 +18,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -25,30 +26,39 @@ import java.util.stream.Collectors;
 public class SideBar extends TabPane {
     
     public static final String TAB_DRAG_KEY = "SideBarTabDrag";
-    
-    public static Tab draggingTab;
-    
     public static final int DEFAULT_WIDTH = 270;
     public static final int MAX_WIDTH = 450;
     public static final int TAB_WIDTH = 50; // Estimated
     
-    private static final String STYLE = "-fx-tab-max-width: 22px;";
+    public static final List<String> DEFAULT_LEFT_TABS = List.of("files", "text", "grades", "skills", "paint");
+    public static final List<String> DEFAULT_RIGHT_TABS = Collections.emptyList();
     
+    private static final String STYLE = "-fx-tab-max-width: 22px;";
+    public static Tab draggingTab;
     private final boolean left;
     private boolean loaded;
     
     public SideBar(boolean left){
         this.left = left;
-    
+        
         getStyleClass().add("app-side-bar");
         setStyle(STYLE);
         
-        setMaxWidth(DEFAULT_WIDTH);
+        setMaxWidth(left ? Main.syncUserData.leftBarWidth : Main.syncUserData.rightBarWidth);
         setMinWidth(0);
-        setPrefWidth(DEFAULT_WIDTH);
-        setWidth(DEFAULT_WIDTH);
+        restoreWidth(false, false);
         
         SplitPane.setResizableWithParent(this, false);
+        
+        widthProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.doubleValue() != 0 && draggingTab == null){
+                if(left){
+                    Main.syncUserData.leftBarWidth = newValue.doubleValue();
+                }else{
+                    Main.syncUserData.rightBarWidth = newValue.doubleValue();
+                }
+            }
+        });
         
         getTabs().addListener((ListChangeListener<Tab>) c -> {
             c.next();
@@ -65,7 +75,7 @@ public class SideBar extends TabPane {
                     Platform.runLater(() -> {
                         setMaxWidth(MAX_WIDTH);
                         if(getWidth() <= 50){
-                            setWidthByEditingDivider(DEFAULT_WIDTH);
+                            restoreWidth(false, true);
                         }
                     });
                 }
@@ -141,6 +151,7 @@ public class SideBar extends TabPane {
                     event.setDropCompleted(true);
                     event.consume();
                     SideBar.hideDragSpaces();
+                    draggingTab = null;
                 }
             }
         });
@@ -152,12 +163,91 @@ public class SideBar extends TabPane {
         });
         
     }
-    
+    public static void selectTab(String tab){
+        selectTab(SideTab.getByName(tab));
+    }
     public static SideBar getTabSideBar(SideTab tab){
         if(isIntoLeftBar(tab)) return MainWindow.leftBar;
         else return MainWindow.rightBar;
     }
-    
+    public static void selectTab(Tab tab){
+        if(isIntoLeftBar(tab)){
+            MainWindow.leftBar.getSelectionModel().select(tab);
+        }else if(isIntoRightBar(tab)){
+            MainWindow.rightBar.getSelectionModel().select(tab);
+        }
+    }
+    public static boolean isIntoLeftBar(Tab tab){
+        return MainWindow.leftBar.getTabs().contains(tab);
+    }
+    public static boolean isIntoRightBar(Tab tab){
+        return MainWindow.rightBar.getTabs().contains(tab);
+    }
+    public static void showDragSpaces(){
+        MainWindow.leftBar.showDragSpace();
+        MainWindow.rightBar.showDragSpace();
+    }
+    public static void hideDragSpaces(){
+        MainWindow.leftBar.hideDragSpace();
+        MainWindow.rightBar.hideDragSpace();
+    }
+    public static void saveBarsOrganization(){
+        Main.syncUserData.leftBarOrganization = MainWindow.leftBar.getTabsList();
+        Main.syncUserData.rightBarOrganization = MainWindow.rightBar.getTabsList();
+    }
+    public static void loadBarsOrganization(){
+        MainWindow.leftBar.loadTabsList(Main.syncUserData.leftBarOrganization);
+        MainWindow.rightBar.loadTabsList(Main.syncUserData.rightBarOrganization);
+    }
+    public static void loadDefaultBarsOrganization(){
+        MainWindow.leftBar.loadTabsList(DEFAULT_LEFT_TABS);
+        MainWindow.rightBar.loadTabsList(DEFAULT_RIGHT_TABS);
+    }
+    public static void loadBarsDefaultWidths(){
+        MainWindow.leftBar.restoreDefaultWidth();
+        MainWindow.rightBar.restoreDefaultWidth();
+    }
+    public static boolean areSideBarsMinimized(){
+        return MainWindow.leftBar.isMinimizedAndOnPane() || MainWindow.rightBar.isMinimizedAndOnPane();
+    }
+    public static void toggleSideBarsMinimized(){
+        if(areSideBarsMinimized()){
+            MainWindow.leftBar.deMinimize();
+            MainWindow.rightBar.deMinimize();
+        }else{
+            MainWindow.leftBar.minimize();
+            MainWindow.rightBar.minimize();
+        }
+    }
+    public static void moveAllTabsToLeft(){
+        // Move all tabs from right bar to left bar
+        ArrayList<Tab> tabsToMove = new ArrayList<>(MainWindow.rightBar.getTabs());
+        for(Tab tab : tabsToMove){
+            MainWindow.rightBar.getTabs().remove(tab);
+            MainWindow.leftBar.getTabs().add(tab);
+        }
+    }
+    public static void moveAllTabsToRight(){
+        // Move all tabs from left bar to right bar
+        ArrayList<Tab> tabsToMove = new ArrayList<>(MainWindow.leftBar.getTabs());
+        for(Tab tab : tabsToMove){
+            MainWindow.leftBar.getTabs().remove(tab);
+            MainWindow.rightBar.getTabs().add(tab);
+        }
+    }
+    public void restoreWidth(boolean onlyIfTooSmall, boolean byDivider){
+        double width = left ? Main.syncUserData.leftBarWidth : Main.syncUserData.rightBarWidth;
+        if(width <= 50){
+            if(onlyIfTooSmall) return;
+            width = DEFAULT_WIDTH;
+        }
+        if(byDivider){
+            setWidthByEditingDivider(width);
+        }else{
+            setPrefWidth(width);
+            setWidth(width);
+        }
+    }
     public void setWidthByEditingDivider(double width){
         if(left){
             MainWindow.mainPane.setDividerPosition(0, width / MainWindow.mainPane.getWidth());
@@ -182,9 +272,9 @@ public class SideBar extends TabPane {
             
         }
     }
-    
     private void addToPane(){
         if(!MainWindow.mainPane.getItems().contains(this)){
+            restoreWidth(true, true);
             if(left){
                 // Right width must be updated to stay the same
                 double rightWidth = MainWindow.rightBar.getWidthByDivider();
@@ -197,67 +287,47 @@ public class SideBar extends TabPane {
     }
     private void removeToPane(){
         if(MainWindow.mainPane.getItems().contains(this)){
-            if(left){
-                // Right width must be updated to stay the same
-                double rightWidth = MainWindow.rightBar.getWidthByDivider();
-                
-                MainWindow.mainPane.getItems().remove(this);
-                
-                MainWindow.rightBar.setWidthByEditingDivider(rightWidth);
+            // Check if removing this would leave no sidebars (only mainScreen)
+            if(MainWindow.mainPane.getItems().size() <= 2){
+                // Instead of removing, just set width to minimal value
+                // Using 1 instead of 0 to avoid GTK warnings on Linux
+                setMaxWidth(1);
+                setWidthByEditingDivider(1);
             }else{
-                MainWindow.mainPane.getItems().remove(this);
+                if(left){
+                    // Right width must be updated to stay the same
+                    double rightWidth = MainWindow.rightBar.getWidthByDivider();
+                    
+                    MainWindow.mainPane.getItems().remove(this);
+                    
+                    MainWindow.rightBar.setWidthByEditingDivider(rightWidth);
+                }else{
+                    MainWindow.mainPane.getItems().remove(this);
+                }
             }
         }
         
     }
-    
-    public static void selectTab(String tab){
-        selectTab(SideTab.getByName(tab));
-    }
-    
-    public static void selectTab(Tab tab){
-        if(isIntoLeftBar(tab)){
-            MainWindow.leftBar.getSelectionModel().select(tab);
-        }else if(isIntoRightBar(tab)){
-            MainWindow.rightBar.getSelectionModel().select(tab);
-        }
-    }
-    
-    public static boolean isIntoLeftBar(Tab tab){
-        return MainWindow.leftBar.getTabs().contains(tab);
-    }
-    
-    public static boolean isIntoRightBar(Tab tab){
-        return MainWindow.rightBar.getTabs().contains(tab);
-    }
-    
-    public static void showDragSpaces(){
-        MainWindow.leftBar.showDragSpace();
-        MainWindow.rightBar.showDragSpace();
-    }
-    
     public void showDragSpace(){
         if(getTabs().isEmpty()){
             addToPane();
             setStyle(STYLE + "-fx-background-color: #0078d7");
             setWidthByEditingDivider(30);
             setMaxWidth(30);
+        }else{
+            addToPane();
+            restoreWidth(false, true);
         }
-        
-    }
-    
-    public static void hideDragSpaces(){
-        MainWindow.leftBar.hideDragSpace();
-        MainWindow.rightBar.hideDragSpace();
     }
     
     public void hideDragSpace(){
         setStyle(STYLE);
         if(getTabs().isEmpty()){
             removeToPane();
+        }else{
+            addToPane();
         }
     }
-    
     public List<String> getTabsList(){
         return getTabs()
                 .stream()
@@ -265,7 +335,6 @@ public class SideBar extends TabPane {
                 .map(SideTab::getName)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
-    
     public void loadTabsList(List<String> tabsName){
         for(String tabName : tabsName){
             SideTab tab = SideTab.getByName(tabName);
@@ -280,14 +349,31 @@ public class SideBar extends TabPane {
             setMaxWidth(MAX_WIDTH); // restore normal max width
         });
     }
-    
-    public static void saveBarsOrganization(){
-        Main.syncUserData.leftBarOrganization = MainWindow.leftBar.getTabsList();
-        Main.syncUserData.rightBarOrganization = MainWindow.rightBar.getTabsList();
+    public void restoreDefaultWidth(){
+        if(left){
+            Main.syncUserData.leftBarWidth = DEFAULT_WIDTH;
+        }else{
+            Main.syncUserData.rightBarWidth = DEFAULT_WIDTH;
+        }
+        if(MainWindow.mainPane.getItems().contains(this)){
+            setMaxWidth(MAX_WIDTH);
+            setWidthByEditingDivider(DEFAULT_WIDTH);
+        }
     }
-    
-    public static void loadBarsOrganization(){
-        MainWindow.leftBar.loadTabsList(Main.syncUserData.leftBarOrganization);
-        MainWindow.rightBar.loadTabsList(Main.syncUserData.rightBarOrganization);
+    public boolean isMinimizedAndOnPane(){
+        return MainWindow.mainPane.getItems().contains(this) && getWidth() <= 50;
+    }
+    public boolean isNotMinimizedAndOnPane(){
+        return MainWindow.mainPane.getItems().contains(this) && getWidth() > 50;
+    }
+    public void minimize(){
+        if(isNotMinimizedAndOnPane()){
+            setWidthByEditingDivider(0);
+        }
+    }
+    public void deMinimize(){
+        if(isMinimizedAndOnPane()){
+            restoreWidth(false, true);
+        }
     }
 }
