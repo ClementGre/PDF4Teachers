@@ -207,8 +207,11 @@ public class SideBar extends TabPane {
         MainWindow.leftBar.restoreDefaultWidth();
         MainWindow.rightBar.restoreDefaultWidth();
     }
+    public static boolean areSideBarsMinimized(){
+        return MainWindow.leftBar.isMinimizedAndOnPane() || MainWindow.rightBar.isMinimizedAndOnPane();
+    }
     public static void toggleSideBarsMinimized(){
-        if(MainWindow.leftBar.isMinimizedAndOnPane() || MainWindow.rightBar.isMinimizedAndOnPane()){
+        if(areSideBarsMinimized()){
             MainWindow.leftBar.deMinimize();
             MainWindow.rightBar.deMinimize();
         }else{
