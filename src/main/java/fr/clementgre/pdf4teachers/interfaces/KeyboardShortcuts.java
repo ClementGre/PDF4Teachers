@@ -249,13 +249,13 @@ public class KeyboardShortcuts {
         lazyShortcuts.add(new ShortcutRecord("",
                 new KeyCodesCombination(KeyCode.LEFT, KeyCode.KP_LEFT), e -> {
             if(!MainWindow.mainScreen.hasDocument(false)) return;
-            MainWindow.mainScreen.navigateLeft();
+            MainWindow.filesTab.loadPreviousFilePreservePage();
             e.consume();
         }));
         lazyShortcuts.add(new ShortcutRecord("",
                 new KeyCodesCombination(KeyCode.RIGHT, KeyCode.KP_RIGHT), e -> {
             if(!MainWindow.mainScreen.hasDocument(false)) return;
-            MainWindow.mainScreen.navigateRight();
+            MainWindow.filesTab.loadNextFilePreservePage();
             e.consume();
         }));
         

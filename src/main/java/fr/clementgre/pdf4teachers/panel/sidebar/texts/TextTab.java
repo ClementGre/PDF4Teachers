@@ -36,13 +36,17 @@ import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Popup;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -81,6 +85,11 @@ public class TextTab extends SideTab {
 
     private boolean txtAreaScrollBarListenerIsSetup;
 
+    // AUTOCOMPLETE DROPDOWN
+    private final Popup autocompletePopup = new Popup();
+    private final ListView<TextTreeItem> autocompleteList = new ListView<>();
+    private boolean isSelectingFromPopup = false;
+
     public TextTab(){
         super("text", SVGPathIcons.TEXT_LETTER, 26, 460/500d);
 
@@ -95,6 +104,9 @@ public class TextTab extends SideTab {
     public void setup(){
         treeView = new TextTreeView(pane);
         optionPane.setMinWidth(200);
+
+        // Setup autocomplete popup
+        setupAutocompletePopup();
 
         PaneUtils.setHBoxPosition(fontCombo, -1, 30, 2.5);
         fontCombo.setStyle("-fx-font-size: 13; -fx-border: null; -fx-padding: 0 4;");
@@ -201,8 +213,14 @@ public class TextTab extends SideTab {
 
         txtArea.setContextMenu(null);
 
-        txtArea.disableProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
-        MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
+        txtArea.disableProperty().addListener((observable, oldValue, newValue) -> {
+            treeView.updateAutoComplete();
+            if(newValue) autocompletePopup.hide();
+        });
+        MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            treeView.updateAutoComplete();
+            autocompletePopup.hide();
+        });
 
         txtArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
@@ -215,7 +233,11 @@ public class TextTab extends SideTab {
             newValue = TextElement.invertMathIfNeeded(newValue);
 
             if(MainWindow.mainScreen.getSelected() instanceof TextElement element){
-                treeView.updateAutoComplete();
+                // Only update autocomplete if not selecting from popup
+                if(!isSelectingFromPopup){
+                    treeView.updateAutoComplete();
+                    updateAutocompletePopup();
+                }
 
                 updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
                 if(!txtAreaScrollBarListenerIsSetup){
@@ -226,7 +248,90 @@ public class TextTab extends SideTab {
                 if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("textedit");
             }
         });
+
+        // Event filter for KEY_PRESSED to intercept Enter key
+        txtArea.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            System.out.println("DEBUG: KEY_PRESSED filter - Key: " + e.getCode() + ", Popup: " + autocompletePopup.isShowing() + ", Char: '" + e.getCharacter() + "'");
+
+            if(autocompletePopup.isShowing()){
+                // Check for ENTER or UNDEFINED with empty/newline character
+                boolean isEnterKey = e.getCode() == KeyCode.ENTER ||
+                                    (e.getCode() == KeyCode.UNDEFINED &&
+                                     (e.getCharacter().isEmpty() ||
+                                      e.getCharacter().equals("\r") ||
+                                      e.getCharacter().equals("\n")));
+
+                if(isEnterKey){
+                    System.out.println("DEBUG: Enter detected in KEY_PRESSED - calling selectAutocompleteItem()");
+                    e.consume();
+                    selectAutocompleteItem();
+                }
+            }
+        });
+
+        // Event filter for KEY_TYPED to catch Enter as typed character
+        txtArea.addEventFilter(KeyEvent.KEY_TYPED, e -> {
+            System.out.println("DEBUG: KEY_TYPED filter - Char: '" + e.getCharacter() + "', Popup: " + autocompletePopup.isShowing());
+
+            if(autocompletePopup.isShowing() &&
+               (e.getCharacter().equals("\r") || e.getCharacter().equals("\n"))){
+                System.out.println("DEBUG: Enter detected in KEY_TYPED - calling selectAutocompleteItem()");
+                e.consume();
+                selectAutocompleteItem();
+            }
+        });
+
         txtArea.setOnKeyPressed(e -> {
+            // Handle autocomplete popup navigation
+            if(autocompletePopup.isShowing()){
+                if(e.getCode() == KeyCode.ENTER){
+                    // Already handled by event filter
+                    e.consume();
+                    return;
+                }else if(e.getCode() == KeyCode.DOWN){
+                    e.consume();
+                    int currentIndex = autocompleteList.getSelectionModel().getSelectedIndex();
+                    if(currentIndex == -1){
+                        // No selection, select first
+                        autocompleteList.getSelectionModel().selectFirst();
+                        autocompleteList.scrollTo(0);
+                    }else if(currentIndex < autocompleteList.getItems().size() - 1){
+                        // Move down
+                        autocompleteList.getSelectionModel().select(currentIndex + 1);
+                        autocompleteList.scrollTo(currentIndex + 1);
+                    }
+                    // At last item, stay there - don't fall through to tree view navigation
+                    return;
+                }else if(e.getCode() == KeyCode.UP){
+                    e.consume();
+                    int currentIndex = autocompleteList.getSelectionModel().getSelectedIndex();
+                    if(currentIndex == -1){
+                        // No selection, select last
+                        autocompleteList.getSelectionModel().selectLast();
+                        autocompleteList.scrollTo(autocompleteList.getItems().size() - 1);
+                    }else if(currentIndex > 0){
+                        // Move up
+                        autocompleteList.getSelectionModel().select(currentIndex - 1);
+                        autocompleteList.scrollTo(currentIndex - 1);
+                    }
+                    // At first item, stay there - don't fall through to tree view navigation
+                    return;
+                }else if(e.getCode() == KeyCode.ESCAPE){
+                    e.consume();
+                    autocompletePopup.hide();
+                    // Remove focus from txtArea to enable app-level keyboard navigation
+                    pane.requestFocus();
+                    return;
+                }
+            }
+
+            // ESC key when popup is NOT showing - still remove focus to enable app navigation
+            if(e.getCode() == KeyCode.ESCAPE){
+                e.consume();
+                pane.requestFocus();
+                return;
+            }
+
             if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
                 e.consume();
                 if(txtArea.getCaretPosition() == txtArea.getText().length()){
@@ -348,5 +453,172 @@ public class TextTab extends SideTab {
                 .filter(sb -> sb.getOrientation() == Orientation.HORIZONTAL)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private void setupAutocompletePopup(){
+        autocompleteList.setPrefHeight(250);
+        autocompleteList.setMaxHeight(400);
+        autocompleteList.setStyle("-fx-background-color: white; -fx-border-color: #999999; -fx-border-width: 1px;");
+
+        // Custom cell factory to display TextTreeItems
+        autocompleteList.setCellFactory(param -> new ListCell<TextTreeItem>(){
+            private final Label label = new Label();
+
+            {
+                // Initialize label
+                label.setMaxWidth(Double.MAX_VALUE);
+                label.setPadding(new Insets(3, 5, 3, 5));
+
+                // Update label style when selection state changes
+                selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                    if(getItem() != null){
+                        if(isNowSelected){
+                            label.setStyle("-fx-font-size: 12px; -fx-text-fill: white;");
+                        }else{
+                            label.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(TextTreeItem item, boolean empty){
+                super.updateItem(item, empty);
+                if(empty || item == null){
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("");
+                }else{
+                    String displayText = TextElement.invertMathIfNeeded(item.getText());
+                    // Truncate long text for display
+                    if(displayText.length() > 80){
+                        displayText = displayText.substring(0, 77) + "...";
+                    }
+                    label.setText(displayText);
+
+                    // Update label color based on selection state
+                    if(isSelected()){
+                        label.setStyle("-fx-font-size: 12px; -fx-text-fill: white;");
+                    }else{
+                        label.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");
+                    }
+
+                    setText(null);
+                    setGraphic(label);
+                    // Don't override background - let JavaFX handle selection highlighting
+                    setStyle("-fx-padding: 2px;");
+                }
+            }
+        });
+
+        // Handle mouse clicks on list items
+        autocompleteList.setOnMouseClicked(event -> {
+            if(event.getClickCount() == 1 && autocompleteList.getSelectionModel().getSelectedItem() != null){
+                selectAutocompleteItem();
+            }
+        });
+
+        autocompletePopup.getContent().add(autocompleteList);
+        autocompletePopup.setAutoHide(true);
+        autocompletePopup.setAutoFix(true);
+    }
+
+    private void updateAutocompletePopup(){
+        if(isSelectingFromPopup) return;
+
+        String matchText = txtArea.getText();
+
+        if(txtArea.isDisabled() || matchText.isBlank()){
+            autocompletePopup.hide();
+            return;
+        }
+
+        // Collect matching items from all sections
+        List<TextTreeItem> matchingItems = new ArrayList<>();
+
+        // Check favorites
+        for(int i = 0; i < treeView.favoritesSection.getChildren().size(); i++){
+            if(treeView.favoritesSection.getChildren().get(i) instanceof TextTreeItem item){
+                if(item.getCore() != MainWindow.mainScreen.getSelected()
+                        && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
+                    matchingItems.add(item);
+                }
+            }
+        }
+
+        // Check lasts
+        for(int i = 0; i < treeView.lastsSection.getChildren().size(); i++){
+            if(treeView.lastsSection.getChildren().get(i) instanceof TextTreeItem item){
+                if(item.getCore() != MainWindow.mainScreen.getSelected()
+                        && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
+                    matchingItems.add(item);
+                }
+            }
+        }
+
+        // Check onFile
+        for(int i = 0; i < treeView.onFileSection.getChildren().size(); i++){
+            if(treeView.onFileSection.getChildren().get(i) instanceof TextTreeItem item){
+                if(item.getCore() != MainWindow.mainScreen.getSelected()
+                        && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
+                    matchingItems.add(item);
+                }
+            }
+        }
+
+        // Update popup
+        if(matchingItems.isEmpty()){
+            autocompletePopup.hide();
+        }else{
+            autocompleteList.getItems().setAll(matchingItems);
+            autocompleteList.getSelectionModel().selectFirst();
+
+            // Position popup below txtArea
+            if(!autocompletePopup.isShowing()){
+                var bounds = txtArea.localToScreen(txtArea.getBoundsInLocal());
+                if(bounds != null){
+                    autocompletePopup.show(txtArea, bounds.getMinX(), bounds.getMaxY());
+                }
+            }
+
+            // Adjust width to match txtArea
+            autocompleteList.setPrefWidth(txtArea.getWidth() - 10);
+        }
+    }
+
+    private void selectAutocompleteItem(){
+        System.out.println("DEBUG: selectAutocompleteItem() called");
+        TextTreeItem selectedItem = autocompleteList.getSelectionModel().getSelectedItem();
+        System.out.println("DEBUG: Selected item: " + selectedItem);
+        System.out.println("DEBUG: Selection index: " + autocompleteList.getSelectionModel().getSelectedIndex());
+        System.out.println("DEBUG: Items count: " + autocompleteList.getItems().size());
+
+        if(selectedItem != null){
+            System.out.println("DEBUG: Selected item text: " + selectedItem.getText());
+            isSelectingFromPopup = true;
+
+            // Hide popup first to prevent visual glitches
+            autocompletePopup.hide();
+
+            // Set the text to the selected item's text
+            String selectedText = TextElement.invertMathIfNeeded(selectedItem.getText());
+            System.out.println("DEBUG: Setting text to: " + selectedText);
+            txtArea.setText(selectedText);
+            txtArea.positionCaret(selectedText.length());
+
+            // Update formatting from the selected item
+            fontCombo.getSelectionModel().select(selectedItem.getFont().getFamily());
+            sizeSpinner.getValueFactory().setValue(selectedItem.getFont().getSize());
+            colorPicker.setValue(selectedItem.getColor());
+            boldBtn.setSelected(FontUtils.getFontWeight(selectedItem.getFont()) == FontWeight.BOLD);
+            itBtn.setSelected(FontUtils.getFontPosture(selectedItem.getFont()) == FontPosture.ITALIC);
+
+            txtArea.requestFocus();
+
+            // Clear flag after all events have been processed
+            PlatformUtils.runLaterOnUIThread(50, () -> {
+                isSelectingFromPopup = false;
+            });
+        }
     }
 }
