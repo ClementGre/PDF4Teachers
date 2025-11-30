@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -39,7 +39,7 @@ public class TextRenderer {
         this.doc = doc;
     }
     
-    // Returns false if the user cancelled the export process.
+    // Returns false if the user canceled the export process.
     public boolean drawText(PDPage page, PDPageContentStream cs, Map.Entry<String, String> fontEntry, TextSpecs ts, PageSpecs ps) throws IOException{
         
         int lineNumber = ts.text().split("\\n").length;
@@ -55,9 +55,9 @@ public class TextRenderer {
         for(String line : ts.text().split("\\n")){
             try{
                 cs.showText(line);
-            }catch(IllegalArgumentException e){
-                if(Log.doDebug()) Log.eNotified(e);
+            }catch(IllegalArgumentException | IllegalStateException e){
                 // A character isn't supported by the current font
+                if(Log.doDebug()) Log.e(e);
                 
                 boolean cancel = PlatformUtils.runAndWait(() -> {
                     ErrorAlert alert = new ErrorAlert(TR.tr("export.missingGlyphError.header", fontEntry.getKey()), e.getMessage(), true);
@@ -80,16 +80,17 @@ public class TextRenderer {
                             .toString().toCharArray();
                     if(replacements.length == 0) replacements = new char[]{'?'};
                 }
-    
+                
                 try{
                     // Add chars one by one, only if they can print.
                     StringBuilder newText = new StringBuilder();
                     for(char c : line.toCharArray()){
                         if(canRender(font, c)) newText.append(c);
+                        else if(c == '\u202F' || c == '\u00A0') newText.append(' ');
                         else newText.append(replacements[0]);
                     }
                     cs.showText(newText.toString());
-        
+                    
                 }catch(IllegalArgumentException ex){
                     Log.eNotified(ex);
                 }
