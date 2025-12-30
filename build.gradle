@@ -93,7 +93,7 @@ dependencies {
 def os = org.gradle.internal.os.OperatingSystem.current()
 def aarch64 = System.getProperty("os.arch") == "aarch64"
 
-version = "1.4.3"
+version = "1.4.4"
 description = "PDF students assessments editor"
 //frenchDescription="Éditeur de copies PDF"
 
