@@ -303,8 +303,7 @@ public class PDFPagesEditor {
         File file = chooser.showOpenDialog(Main.window);
         if(file != null){
             if(file.getParentFile().exists()) MainWindow.userData.lastOpenDir = file.getParentFile().getAbsolutePath();
-            try{
-                PDDocument fileDoc = Loader.loadPDF(new RandomAccessReadBufferedFile(file));
+            try(PDDocument fileDoc = Loader.loadPDF(new RandomAccessReadBufferedFile(file))){
                 addPdfDocument(fileDoc, index);
             }catch(IOException e){
                 Log.eNotified(e);
@@ -355,12 +354,6 @@ public class PDFPagesEditor {
         for(int j = index + 1; j < index + addedPages; j++){
             MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, index, null, getDocument().getPage(j), false));
             document.addSelectedPage(j);
-        }
-        
-        try{
-            toAddDoc.close();
-        }catch(IOException e){
-            Log.eNotified(e);
         }
         
         // update coordinates of the pages
