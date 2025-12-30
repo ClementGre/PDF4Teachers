@@ -78,7 +78,14 @@ public class PDFPagesEditor {
     public PDFPagesEditor(PDFPagesRender renderer){
         this.renderer = renderer;
     }
-    
+    // When the crop box is bigger than the media box, the media box is increased.
+    private static @NotNull PDRectangle correctMediaBoxForCropBox(PDRectangle cropBox, PDRectangle mediaBox){
+        float leftX = Math.min(cropBox.getLowerLeftX(), mediaBox.getLowerLeftX());
+        float leftY = Math.min(cropBox.getLowerLeftY(), mediaBox.getLowerLeftY());
+        float rightX = Math.max(cropBox.getUpperRightX(), mediaBox.getUpperRightX());
+        float rightY = Math.max(cropBox.getUpperRightY(), mediaBox.getUpperRightY());
+        return new PDRectangle(leftX, leftY, rightX - leftX, rightY - leftY);
+    }
     public void saveEditsIfNeeded(){
         if(edited) saveEdits();
     }
@@ -87,7 +94,6 @@ public class PDFPagesEditor {
         renderer.saveDocumentTo(renderer.getFile());
         edited = false;
     }
-    
     // ascendPage and descendPage are registering an UndoAction,
     // but it is not the case of the others moving functions.
     public void ascendPage(PageRenderer page){
@@ -102,15 +108,6 @@ public class PDFPagesEditor {
         assert pagesToPass != 0 : "You can't move a page with pagesToPass = 0, this means to not move the page.";
         movePageByIndex(page, page.getPage() + pagesToPass);
     }
-    // When the crop box is bigger than the media box, the media box is increased.
-    private static @NotNull PDRectangle correctMediaBoxForCropBox(PDRectangle cropBox, PDRectangle mediaBox){
-        float leftX = Math.min(cropBox.getLowerLeftX(), mediaBox.getLowerLeftX());
-        float leftY = Math.min(cropBox.getLowerLeftY(), mediaBox.getLowerLeftY());
-        float rightX = Math.max(cropBox.getUpperRightX(), mediaBox.getUpperRightX());
-        float rightY = Math.max(cropBox.getUpperRightY(), mediaBox.getUpperRightY());
-        return new PDRectangle(leftX, leftY, rightX - leftX, rightY - leftY);
-    }
-    
     public void rotatePage(PageRenderer page, boolean right, UType uType, boolean animated){
         int angle = right ? 90 : -90;
         page.quitVectorEditMode();
@@ -312,10 +309,15 @@ public class PDFPagesEditor {
         
     }
     public void newConvertPage(int originalPage, int index){
-        new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageRotatedCropBox(originalPage), (convertedFiles) -> {
+        new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageRotatedCropBox(originalPage), convertedFiles -> {
             if(convertedFiles.isEmpty()) return;
             ConvertedFile file = convertedFiles.getFirst();
             addPdfDocument(file.document, index);
+            try{
+                file.document.close();
+            }catch(IOException e){
+                Log.eNotified(e);
+            }
         });
     }
     public void addPdfDocument(PDDocument toAddDoc, int index){
@@ -364,7 +366,7 @@ public class PDFPagesEditor {
         document.setCurrentPage(index);
     }
     public boolean setPageMargin(int pageNumber, float marginTop, float marginRight, float marginBottom, float marginLeft,
-                              boolean updateUI, boolean absolute, UType uType){
+                                 boolean updateUI, boolean absolute, UType uType){
         PDPage page = getDocument().getPage(pageNumber);
         PDRectangle oldMediaBox = page.getCropBox();
         PDRectangle oldCropBox = page.getCropBox();
