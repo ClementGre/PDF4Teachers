@@ -257,11 +257,27 @@ public class HyperlinkOverlayManager {
         }
         
         private void updatePosition() {
+            // Get the actual PDF page dimensions
+            PDRectangle pageCropBox;
+            try {
+                PDPage page = MainWindow.mainScreen.document.pdfPagesRender.getDocument()
+                        .getPage(pageRenderer.getPage());
+                pageCropBox = page.getCropBox();
+            } catch (Exception e) {
+                // Fallback to A4 dimensions if we can't get the page
+                pageCropBox = new PDRectangle(595, 842);
+            }
+            
             // Convert PDF coordinates to page coordinates
-            double x = hyperlink.getX() / 595.0 * pageRenderer.getWidth();
-            double y = hyperlink.getY() / 842.0 * pageRenderer.getHeight();
-            double width = hyperlink.getWidth() / 595.0 * pageRenderer.getWidth();
-            double height = hyperlink.getHeight() / 842.0 * pageRenderer.getHeight();
+            // PDF coordinates are already converted in createHyperlinkFromAnnotation,
+            // so we just need to scale them to the current page size
+            double scaleX = pageRenderer.getWidth() / pageCropBox.getWidth();
+            double scaleY = pageRenderer.getHeight() / pageCropBox.getHeight();
+            
+            double x = hyperlink.getX() * scaleX;
+            double y = hyperlink.getY() * scaleY;
+            double width = hyperlink.getWidth() * scaleX;
+            double height = hyperlink.getHeight() * scaleY;
             
             setLayoutX(x);
             setLayoutY(y);
