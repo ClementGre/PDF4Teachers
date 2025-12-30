@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -82,7 +82,7 @@ public class TextTab extends SideTab {
     private boolean txtAreaScrollBarListenerIsSetup;
 
     public TextTab(){
-        super("text", SVGPathIcons.TEXT_LETTER, 26, 460/500d);
+        super("text", SVGPathIcons.TEXT_LETTER, 24, 460 / 500d);
 
         draggingItem = null;
         draggingElement = null;
@@ -177,7 +177,7 @@ public class TextTab extends SideTab {
                 current.textProperty().unbind();
                 current.fontProperty().unbind();
 
-                if(((TextElement) oldElement).hasEmptyText()){
+                if(current.hasEmptyText()){
                     oldElement.delete(true, UType.ELEMENT_NO_COUNT_BEFORE);
                 }
 

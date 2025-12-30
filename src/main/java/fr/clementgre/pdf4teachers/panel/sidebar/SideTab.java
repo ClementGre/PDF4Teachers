@@ -89,6 +89,8 @@ public class SideTab extends Tab {
             return MainWindow.skillsTab;
         }else if(MainWindow.paintTab.getName().equals(name)){
             return MainWindow.paintTab;
+        }else if(MainWindow.tocTab.getName().equals(name)){
+            return MainWindow.tocTab;
         }
         return null;
     }

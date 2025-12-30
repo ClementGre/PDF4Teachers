@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024. Clément Grennerat
+ * Copyright (c) 2020-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -49,7 +49,7 @@ public class GradeTab extends SideTab {
     }, true);
     
     public GradeTab(){
-        super("grades", SVGPathIcons.ON_TWENTY, 29, 500/440d);
+        super("grades", SVGPathIcons.ON_TWENTY, 27, 500 / 440d);
         
         setContent(pane);
         setup();

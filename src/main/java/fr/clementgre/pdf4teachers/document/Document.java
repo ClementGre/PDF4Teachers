@@ -113,6 +113,18 @@ public class Document {
         updateShowsStatus();
     }
     
+    public void showHyperlinks(){
+        for(PageRenderer page : pages){
+            page.showHyperlinks();
+        }
+    }
+    
+    public void hideHyperlinks(){
+        for(PageRenderer page : pages){
+            page.hideHyperlinks();
+        }
+    }
+    
     public boolean loadEdition(boolean updateScrollValue){
         this.edition = new Edition(file, this);
         if(edition.load(updateScrollValue)){

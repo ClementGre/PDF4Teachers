@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.CreateDeleteUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageMoveUndoAction;
+import fr.clementgre.pdf4teachers.document.render.display.hyperlinks.HyperlinkOverlayManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
@@ -67,7 +68,7 @@ public class PageRenderer extends Pane {
     public static final int PAGE_MARGIN = 30;
     public static final int PAGE_MARGIN_GRID = 60;
     
-    public static Background WHITE_BACKGROUND = new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY));
+    public static final Background WHITE_BACKGROUND = new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY));
     
     private PageStatus status = PageStatus.HIDE;
     
@@ -89,6 +90,7 @@ public class PageRenderer extends Pane {
     private PageGridSeparator pageGridSeparatorBefore;
     private PageGridEditPane pageGridEditPane;
     private PageGridNumber pageGridNumber;
+    private HyperlinkOverlayManager hyperlinkOverlayManager;
     
     private GraphicElement placingElement;
     
@@ -116,6 +118,7 @@ public class PageRenderer extends Pane {
     
     public PageRenderer(int page){
         this.page = page;
+        this.hyperlinkOverlayManager = new HyperlinkOverlayManager(this);
         setup();
     }
     
@@ -866,6 +869,12 @@ public class PageRenderer extends Pane {
         removeRender();
         setVisible(false);
         
+        // Clean up hyperlink overlays
+        if(hyperlinkOverlayManager != null) {
+            hyperlinkOverlayManager.clearOverlays();
+            hyperlinkOverlayManager = null;
+        }
+        
         // Wait a bit before removing the page because else, the render could be leaked
         // JavaFX Bug : When the parent of the ImageView is removed from its parent too fast, the ImageView (NGImageView) is leaked.
         PlatformUtils.runLaterOnUIThread(10000, () -> {
@@ -984,6 +993,12 @@ public class PageRenderer extends Pane {
             setCursor(Cursor.DEFAULT);
             loader.setVisible(false);
             status = PageStatus.RENDERED;
+            
+            // Extract hyperlinks when page is rendered
+            if(hyperlinkOverlayManager != null) {
+                hyperlinkOverlayManager.extractHyperlinks();
+            }
+            
             if(callBack != null) callBack.call();
         });
     }
@@ -1174,6 +1189,14 @@ public class PageRenderer extends Pane {
     
     public void quitVectorEditMode(){
         if(isVectorEditMode()) vectorElementPageDrawer.getVectorElement().quitEditMode();
+    }
+    
+    public void showHyperlinks(){
+        if(hyperlinkOverlayManager != null) hyperlinkOverlayManager.show();
+    }
+    
+    public void hideHyperlinks(){
+        if(hyperlinkOverlayManager != null) hyperlinkOverlayManager.hide();
     }
     
     public static int getPageMargin(){
