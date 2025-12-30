@@ -891,7 +891,6 @@ public class MainScreen extends Pane {
     }
     public void updateHyperlinksVisibility(boolean shortcutDown){
         if(hasDocument(false)){
-            Log.t("updateHyperlinksVisibility: shortcutDown = " + shortcutDown + " mouseIn = " + mouseIn);
             if(shortcutDown && mouseIn) document.showHyperlinks();
             else document.hideHyperlinks();
         }

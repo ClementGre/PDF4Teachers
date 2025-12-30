@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -57,6 +57,9 @@ public class AutoTipsManager {
     
     @ToolTipVar(actionKey = "", prerequisiteKey = "editPagesMode", objectWhereDisplay = "mainscreen")
     private static final String editPagesUndo = "autoTips.editPagesUndo";
+    
+    @ToolTipVar(actionKey = "", prerequisiteKey = "", objectWhereDisplay = "mainscreen")
+    private static final String followLinks = "autoTips.followLinks";
     
     @ToolTipVar(actionKey = "opendocument", prerequisiteKey = "", objectWhereDisplay = "mainscreen")
     private static final String editSystemAndExportation = "autoTips.editSystemAndExportation";
