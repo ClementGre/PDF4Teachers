@@ -70,7 +70,10 @@ public class MainScreen extends Pane {
     
     public Document document;
     public String failedEditFile = "";
-    
+
+    // Page number to force scroll to after opening a file (used for LEFT/RIGHT navigation)
+    private int forceScrollToPage = -1;
+
     private final Label info = new Label();
     private final Hyperlink infoLink = new Hyperlink();
     
@@ -605,8 +608,27 @@ public class MainScreen extends Pane {
             if(MainWindow.userData.editPagesMode){
                 PlatformUtils.runLaterOnUIThread(500, () -> zoomOperator.updatePaneDimensions(0, 0.5));
             }else{
-                double scrollValue = zoomOperator.vScrollBar.getValue(); // This value has been set when loading the edition
-                zoomOperator.updatePaneDimensions(scrollValue, 0.5);
+                // Check if we should force scroll to a specific page (used for LEFT/RIGHT navigation)
+                if(forceScrollToPage >= 0 && forceScrollToPage < document.getPagesNumber()){
+                    int targetPageNum = forceScrollToPage;
+                    forceScrollToPage = -1; // Reset before scrolling
+
+                    // First update dimensions with default scroll (0 = top)
+                    zoomOperator.updatePaneDimensions(0, 0.5);
+
+                    // Then scroll to the target page after layout is complete
+                    // Using longer delay to ensure all layout operations have settled
+                    PlatformUtils.runLaterOnUIThread(500, () -> {
+                        PageRenderer targetPage = document.getPage(targetPageNum);
+                        if(targetPage != null){
+                            zoomOperator.scrollToPage(targetPage);
+                        }
+                    });
+                }else{
+                    // Use saved scroll value from edition
+                    double scrollValue = zoomOperator.vScrollBar.getValue();
+                    zoomOperator.updatePaneDimensions(scrollValue, 0.5);
+                }
             }
             
             // Update menu bar
@@ -910,5 +932,10 @@ public class MainScreen extends Pane {
         if(!isGridView()) return 1;
         int rest = document.getPagesNumber() % getGridModePagesPerRow();
         return rest == 0 ? getGridModePagesPerRow() : rest;
+    }
+
+    // Used by FileTab to force scroll to specific page when navigating between PDFs
+    public void setForceScrollToPage(int pageNumber){
+        this.forceScrollToPage = pageNumber;
     }
 }

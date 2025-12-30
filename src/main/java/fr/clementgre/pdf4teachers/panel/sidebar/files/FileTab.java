@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PDFPagesRender;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
@@ -315,7 +316,7 @@ public class FileTab extends SideTab {
             MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.beginningOfList"), 15);
             return;
         }
-        
+
         File toOpen = files.getItems().get(selected - 1);
         if(toOpen == null) return;
         MainWindow.mainScreen.openFile(toOpen);
@@ -326,10 +327,53 @@ public class FileTab extends SideTab {
             MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.endOfList"), 15);
             return;
         }
-        
+
         File toOpen = files.getItems().get(selected + 1);
         if(toOpen == null) return;
         MainWindow.mainScreen.openFile(toOpen);
+    }
+
+    // NAVIGATION WITH PAGE PRESERVATION
+    public void loadPreviousFilePreservePage(){
+        int selected = files.getSelectionModel().getSelectedIndex();
+        if(selected <= 0){
+            MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.beginningOfList"), 15);
+            return;
+        }
+
+        // Get currently visible page (not cursor position - works without clicking)
+        PageRenderer visiblePage = MainWindow.mainScreen.document.getFirstTopVisiblePage();
+        int currentPage = visiblePage != null ? visiblePage.getPage() : 0;
+
+        File toOpen = files.getItems().get(selected - 1);
+        if(toOpen == null) return;
+
+        // Set the target page BEFORE opening the file
+        // openFile() will scroll to this page after layout
+        // Pass resetScrollValue=true to prevent restoring saved scroll from edition file
+        MainWindow.mainScreen.setForceScrollToPage(currentPage);
+        MainWindow.mainScreen.openFile(toOpen, true);
+    }
+
+    public void loadNextFilePreservePage(){
+        int selected = files.getSelectionModel().getSelectedIndex();
+        if(selected == files.getItems().size() - 1){
+            MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.endOfList"), 15);
+            return;
+        }
+
+        // Get currently visible page (not cursor position - works without clicking)
+        PageRenderer visiblePage = MainWindow.mainScreen.document.getFirstTopVisiblePage();
+        int currentPage = visiblePage != null ? visiblePage.getPage() : 0;
+
+        File toOpen = files.getItems().get(selected + 1);
+        if(toOpen == null) return;
+
+        // Set the target page BEFORE opening the file
+        // openFile() will scroll to this page after layout
+        // Pass resetScrollValue=true to prevent restoring saved scroll from edition file
+        MainWindow.mainScreen.setForceScrollToPage(currentPage);
+        MainWindow.mainScreen.openFile(toOpen, true);
     }
     
     
