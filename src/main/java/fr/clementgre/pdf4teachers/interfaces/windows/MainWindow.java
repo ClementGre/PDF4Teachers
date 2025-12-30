@@ -24,6 +24,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.SkillsTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.toc.TocTab;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.locking.LockManager;
@@ -73,6 +74,7 @@ public class MainWindow extends Stage {
     public static GradeTab gradeTab;
     public static SkillsTab skillsTab;
     public static PaintTab paintTab;
+    public static TocTab tocTab;
     
     public static KeyboardShortcuts keyboardShortcuts;
     
@@ -157,6 +159,7 @@ public class MainWindow extends Stage {
         textTab = new TextTab();
         gradeTab = new GradeTab();
         skillsTab = new SkillsTab();
+        tocTab = new TocTab();
         try{
             FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/PaintTab.fxml")));
         }catch(IOException e){

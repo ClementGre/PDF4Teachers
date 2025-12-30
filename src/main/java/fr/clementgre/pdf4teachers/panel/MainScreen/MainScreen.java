@@ -612,6 +612,9 @@ public class MainScreen extends Pane {
             // Update menu bar
             MainWindow.menuBar.updateSameNameEditionsMenu();
             
+            // Load table of contents
+            MainWindow.tocTab.loadTableOfContents();
+            
             AutoTipsManager.showByAction("opendocument");
         });
     }
@@ -655,6 +658,7 @@ public class MainScreen extends Pane {
             
             MainWindow.gradeTab.treeView.clearElements(false, false);
             MainWindow.textTab.treeView.onCloseDocument();
+            MainWindow.tocTab.clear();
             document.stopDocumentSaver();
             document.close();
             document = null;
