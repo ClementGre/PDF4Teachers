@@ -156,9 +156,12 @@ public class TocTab extends SideTab {
             
             // Calculate the target scroll position
             double targetY = MainWindow.mainScreen.document.getPage(pageNumber).getTranslateY();
-            MainWindow.mainScreen.zoomOperator.vScrollBar.setValue(
-                targetY / MainWindow.mainScreen.pane.getHeight()
-            );
+            double paneHeight = MainWindow.mainScreen.pane.getHeight();
+            if (paneHeight > 0) {
+                MainWindow.mainScreen.zoomOperator.vScrollBar.setValue(
+                    targetY / paneHeight
+                );
+            }
         }
     }
     

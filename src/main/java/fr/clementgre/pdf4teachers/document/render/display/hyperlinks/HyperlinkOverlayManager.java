@@ -26,7 +26,6 @@ import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -250,9 +249,12 @@ public class HyperlinkOverlayManager {
             if (pageNumber >= 0 && pageNumber < MainWindow.mainScreen.document.getPagesNumber()) {
                 // Scroll to the target page
                 double targetY = MainWindow.mainScreen.document.getPage(pageNumber).getTranslateY();
-                MainWindow.mainScreen.zoomOperator.vScrollBar.setValue(
-                        targetY / MainWindow.mainScreen.pane.getHeight()
-                );
+                double paneHeight = MainWindow.mainScreen.pane.getHeight();
+                if (paneHeight > 0) {
+                    MainWindow.mainScreen.zoomOperator.vScrollBar.setValue(
+                            targetY / paneHeight
+                    );
+                }
             }
         }
         
@@ -271,18 +273,24 @@ public class HyperlinkOverlayManager {
             // Convert PDF coordinates to page coordinates
             // PDF coordinates are already converted in createHyperlinkFromAnnotation,
             // so we just need to scale them to the current page size
-            double scaleX = pageRenderer.getWidth() / pageCropBox.getWidth();
-            double scaleY = pageRenderer.getHeight() / pageCropBox.getHeight();
+            double pageWidth = pageCropBox.getWidth();
+            double pageHeight = pageCropBox.getHeight();
             
-            double x = hyperlink.getX() * scaleX;
-            double y = hyperlink.getY() * scaleY;
-            double width = hyperlink.getWidth() * scaleX;
-            double height = hyperlink.getHeight() * scaleY;
-            
-            setLayoutX(x);
-            setLayoutY(y);
-            setPrefWidth(width);
-            setPrefHeight(height);
+            // Check for valid dimensions to avoid division by zero
+            if (pageWidth > 0 && pageHeight > 0) {
+                double scaleX = pageRenderer.getWidth() / pageWidth;
+                double scaleY = pageRenderer.getHeight() / pageHeight;
+                
+                double x = hyperlink.getX() * scaleX;
+                double y = hyperlink.getY() * scaleY;
+                double width = hyperlink.getWidth() * scaleX;
+                double height = hyperlink.getHeight() * scaleY;
+                
+                setLayoutX(x);
+                setLayoutY(y);
+                setPrefWidth(width);
+                setPrefHeight(height);
+            }
         }
     }
 }

@@ -5,8 +5,6 @@
 
 package fr.clementgre.pdf4teachers.document.render.display.hyperlinks;
 
-import org.apache.pdfbox.pdmodel.interactive.action.PDAction;
-
 /**
  * Represents a hyperlink found in a PDF page
  */
