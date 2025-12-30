@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -125,7 +125,7 @@ public class PaintTab extends SideTab {
     public static GraphicElement draggingElement;
     
     public PaintTab(){
-        super("paint", SVGPathIcons.DRAW_POLYGON, 28, 0);
+        super("paint", SVGPathIcons.DRAW_POLYGON, 26, 0);
         MainWindow.paintTab = this;
     }
     

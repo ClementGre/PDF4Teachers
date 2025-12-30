@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -68,7 +68,7 @@ public class PageRenderer extends Pane {
     public static final int PAGE_MARGIN = 30;
     public static final int PAGE_MARGIN_GRID = 60;
     
-    public static Background WHITE_BACKGROUND = new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY));
+    public static final Background WHITE_BACKGROUND = new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY));
     
     private PageStatus status = PageStatus.HIDE;
     

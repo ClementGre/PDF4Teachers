@@ -60,13 +60,12 @@ public class HyperlinkOverlayManager {
             if (annotations == null) return;
             
             for (PDAnnotation annotation : annotations) {
-                if (annotation instanceof PDAnnotationLink) {
-                    PDAnnotationLink linkAnnotation = (PDAnnotationLink) annotation;
+                if(annotation instanceof PDAnnotationLink linkAnnotation){
                     processLinkAnnotation(linkAnnotation, page);
                 }
             }
         } catch (IOException e) {
-            Log.e("Error extracting hyperlinks from page " + pageRenderer.getPage(), e);
+            Log.e(e);
         }
     }
     
@@ -79,7 +78,7 @@ public class HyperlinkOverlayManager {
             HyperlinkOverlay overlay = new HyperlinkOverlay(hyperlink, pageRenderer);
             overlays.add(overlay);
             
-            // Add overlay to page but keep it hidden initially
+            // Add overlay to page
             if (!pageRenderer.getChildren().contains(overlay)) {
                 pageRenderer.getChildren().add(overlay);
             }
@@ -96,8 +95,7 @@ public class HyperlinkOverlayManager {
         PDDestination dest = linkAnnotation.getDestination();
         
         // Check action first
-        if (action instanceof PDActionURI) {
-            PDActionURI uriAction = (PDActionURI) action;
+        if(action instanceof PDActionURI uriAction){
             String uri = uriAction.getURI();
             if (uri != null) {
                 if (uri.startsWith("mailto:")) {
@@ -107,16 +105,15 @@ public class HyperlinkOverlayManager {
                 }
                 destination = uri;
             }
-        } else if (action instanceof PDActionGoTo) {
-            PDActionGoTo gotoAction = (PDActionGoTo) action;
+        }else if(action instanceof PDActionGoTo gotoAction){
             type = Hyperlink.Type.GOTO;
-            if (gotoAction.getDestination() instanceof PDPageDestination) {
-                targetPage = ((PDPageDestination) gotoAction.getDestination()).retrievePageNumber();
+            if(gotoAction.getDestination() instanceof PDPageDestination gotoActionDestination){
+                targetPage = gotoActionDestination.retrievePageNumber();
             }
-        } else if (dest instanceof PDPageDestination) {
+        }else if(dest instanceof PDPageDestination pageDestination){
             // Check destination if no action
             type = Hyperlink.Type.GOTO;
-            targetPage = ((PDPageDestination) dest).retrievePageNumber();
+            targetPage = pageDestination.retrievePageNumber();
         }
         
         if (type == Hyperlink.Type.UNKNOWN) {
@@ -222,8 +219,7 @@ public class HyperlinkOverlayManager {
         
         private void handleClick() {
             switch (hyperlink.getType()) {
-                case URL:
-                case MAILTO:
+                case URL, MAILTO:
                     if (hyperlink.getDestination() != null) {
                         try {
                             HostServices hostServices = fr.clementgre.pdf4teachers.Main.hostServices;
@@ -231,7 +227,7 @@ public class HyperlinkOverlayManager {
                                 hostServices.showDocument(hyperlink.getDestination());
                             }
                         } catch (Exception e) {
-                            Log.e("Error opening link: " + hyperlink.getDestination(), e);
+                            Log.eNotified(e, "Error opening link: " + hyperlink.getDestination());
                         }
                     }
                     break;

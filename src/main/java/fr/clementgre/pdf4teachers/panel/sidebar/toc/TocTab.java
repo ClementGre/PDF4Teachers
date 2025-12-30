@@ -5,8 +5,10 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.toc;
 
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.geometry.Insets;
@@ -17,11 +19,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
-
-import java.io.IOException;
 
 public class TocTab extends SideTab {
     
@@ -29,27 +31,29 @@ public class TocTab extends SideTab {
     private final TreeView<TocEntry> treeView = new TreeView<>();
     private final Label emptyLabel = new Label();
     
-    public TocTab() {
-        super("toc", SVGPathIcons.LIST, 20, 1.05);
+    public TocTab(){
+        super("toc", SVGPathIcons.LIST, 24, 1.05);
         
         setContent(root);
         
         emptyLabel.setText(TR.tr("sidebar.toc.empty"));
-        emptyLabel.setFont(Font.font(emptyLabel.getFont().getFamily(), FontWeight.ITALIC, 13));
+        emptyLabel.setWrapText(true);
+        emptyLabel.setFont(Font.font(emptyLabel.getFont().getFamily(), FontWeight.NORMAL, 13));
         emptyLabel.setPadding(new Insets(10));
         
         root.getChildren().add(emptyLabel);
         
         treeView.setShowRoot(false);
         treeView.setPadding(new Insets(5));
+        treeView.prefHeightProperty().bind(root.heightProperty());
         
         // Handle click on TOC entry
         treeView.setOnMouseClicked(event -> {
             TreeItem<TocEntry> selectedItem = treeView.getSelectionModel().getSelectedItem();
-            if (selectedItem != null && selectedItem.getValue() != null) {
+            if(selectedItem != null && selectedItem.getValue() != null){
                 TocEntry entry = selectedItem.getValue();
-                if (entry.getPageNumber() >= 0) {
-                    navigateToPage(entry.getPageNumber());
+                if(entry.pageNumber() >= 0){
+                    navigateToPageAndY(entry.pageNumber(), entry.pageY());
                 }
             }
         });
@@ -58,30 +62,30 @@ public class TocTab extends SideTab {
     /**
      * Loads the table of contents from the PDF document
      */
-    public void loadTableOfContents() {
-        if (!MainWindow.mainScreen.hasDocument(false)) {
+    public void loadTableOfContents(){
+        if(!MainWindow.mainScreen.hasDocument(false)){
             showEmptyState();
             return;
         }
         
         PDDocument document = MainWindow.mainScreen.document.pdfPagesRender.getDocument();
-        if (document == null) {
+        if(document == null){
             showEmptyState();
             return;
         }
         
         PDDocumentOutline outline = document.getDocumentCatalog().getDocumentOutline();
-        if (outline == null) {
+        if(outline == null){
             showEmptyState();
             return;
         }
         
-        TreeItem<TocEntry> rootItem = new TreeItem<>(new TocEntry("Root", -1));
-        buildOutlineTree(outline, rootItem);
+        TreeItem<TocEntry> rootItem = new TreeItem<>(new TocEntry("Root", -1, 0));
+        buildOutlineTree(outline, document, rootItem);
         
-        if (rootItem.getChildren().isEmpty()) {
+        if(rootItem.getChildren().isEmpty()){
             showEmptyState();
-        } else {
+        }else{
             treeView.setRoot(rootItem);
             root.getChildren().clear();
             root.getChildren().add(treeView);
@@ -91,44 +95,32 @@ public class TocTab extends SideTab {
     /**
      * Recursively builds the outline tree
      */
-    private void buildOutlineTree(PDOutlineNode parentOutline, TreeItem<TocEntry> parentTreeItem) {
+    private void buildOutlineTree(PDOutlineNode parentOutline, PDDocument document, TreeItem<TocEntry> parentTreeItem){
         PDOutlineItem current = parentOutline.getFirstChild();
-        while (current != null) {
-            try {
+        while(current != null){
+            try{
                 String title = current.getTitle();
-                int pageNumber = -1;
-                
-                // Get the page number from the destination
-                if (current.getDestination() != null) {
-                    pageNumber = current.getDestination().retrievePageNumber();
-                } else if (current.getAction() != null) {
-                    // Some PDFs use actions instead of destinations
-                    try {
-                        if (current.getAction() instanceof org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo) {
-                            org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo goToAction = 
-                                (org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo) current.getAction();
-                            if (goToAction.getDestination() != null) {
-                                pageNumber = goToAction.getDestination().retrievePageNumber();
-                            }
-                        }
-                    } catch (IOException e) {
-                        // Ignore - page number will remain -1
-                    }
+                PDPage page = current.findDestinationPage(document);
+                int pageNumber = document.getPages().indexOf(page);
+                int pageY = 0;
+                if(current.getDestination() instanceof PDPageXYZDestination destination){
+                    Log.t("Found y value " + destination.getTop() + " for outline item " + title);
+                    pageY = destination.getTop();
                 }
                 
-                TocEntry entry = new TocEntry(title != null ? title : "Untitled", pageNumber);
+                TocEntry entry = new TocEntry(title != null ? title : "Untitled", pageNumber, pageY);
                 TreeItem<TocEntry> treeItem = new TreeItem<>(entry);
                 parentTreeItem.getChildren().add(treeItem);
                 
                 // Recursively add children
-                buildOutlineTree(current, treeItem);
+                buildOutlineTree(current, document, treeItem);
                 
                 current = current.getNextSibling();
-            } catch (Exception e) {
+            }catch(Exception e){
                 // Skip this outline item if there's an error
-                try {
+                try{
                     current = current.getNextSibling();
-                } catch (Exception e2) {
+                }catch(Exception e2){
                     break;
                 }
             }
@@ -138,7 +130,7 @@ public class TocTab extends SideTab {
     /**
      * Shows empty state when no TOC is available
      */
-    private void showEmptyState() {
+    private void showEmptyState(){
         root.getChildren().clear();
         root.getChildren().add(emptyLabel);
     }
@@ -146,29 +138,17 @@ public class TocTab extends SideTab {
     /**
      * Navigates to the specified page
      */
-    private void navigateToPage(int pageNumber) {
-        if (!MainWindow.mainScreen.hasDocument(false)) return;
+    private void navigateToPageAndY(int pageNumber, int pageY){
+        if(!MainWindow.mainScreen.hasDocument(false)) return;
         
-        if (pageNumber >= 0 && pageNumber < MainWindow.mainScreen.document.getPagesNumber()) {
-            // Scroll to the page
-            MainWindow.mainScreen.document.getPage(pageNumber).toFront();
-            MainWindow.mainScreen.document.getPage(pageNumber).requestFocus();
-            
-            // Calculate the target scroll position
-            double targetY = MainWindow.mainScreen.document.getPage(pageNumber).getTranslateY();
-            double paneHeight = MainWindow.mainScreen.pane.getHeight();
-            if (paneHeight > 0) {
-                MainWindow.mainScreen.zoomOperator.vScrollBar.setValue(
-                    targetY / paneHeight
-                );
-            }
-        }
+        PageRenderer page = MainWindow.mainScreen.document.getPage(pageNumber);
+        MainWindow.mainScreen.zoomOperator.scrollToPageAndY(page, pageY);
     }
     
     /**
      * Clears the table of contents
      */
-    public void clear() {
+    public void clear(){
         showEmptyState();
     }
 }

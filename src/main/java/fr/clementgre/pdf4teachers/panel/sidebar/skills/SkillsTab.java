@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -123,7 +123,7 @@ public class SkillsTab extends SideTab {
     });
 
     public SkillsTab(){
-        super("skills", SVGPathIcons.SKILLS_GRAPH, 26, 1);
+        super("skills", SVGPathIcons.SKILLS_GRAPH, 24, 1);
 
         SkillsAssessment.setup();
 

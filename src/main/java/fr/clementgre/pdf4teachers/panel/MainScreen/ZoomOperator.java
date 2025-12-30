@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023. Clément Grennerat
+ * Copyright (c) 2020-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -21,6 +21,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 public class ZoomOperator {
     
@@ -372,7 +373,21 @@ public class ZoomOperator {
     }
     public void scrollToPage(PageRenderer page){
         int toScroll = (int) ((getPaneY() - getPaneShiftY()) + (page.getTranslateY() - PageRenderer.getPageMargin() + 5) * getPaneScale());
-        scrollByTranslateY(toScroll, false, false);
+        boolean removeTransition = Math.abs(toScroll) > 3000;
+        scrollByTranslateY(toScroll, removeTransition, false);
+    }
+    public void scrollToPageAndY(PageRenderer page, int pageY){
+        if(!MainWindow.mainScreen.hasDocument(false)
+                || MainWindow.mainScreen.document.pdfPagesRender.getDocument() == null
+                || MainWindow.mainScreen.document.pdfPagesRender.getDocument().getNumberOfPages() <= page.getPage()){
+            return;
+        }
+        PDRectangle cropBox = MainWindow.mainScreen.document.pdfPagesRender.getDocument().getPage(page.getPage()).getCropBox();
+        int offsetY = (int) ((cropBox.getHeight() - pageY) / cropBox.getHeight() * page.getHeight());
+        int toScroll = (int) ((getPaneY() - getPaneShiftY()) + (page.getTranslateY() - 40 + offsetY) * getPaneScale());
+        
+        boolean removeTransition = Math.abs(toScroll) > 3000;
+        scrollByTranslateY(toScroll, removeTransition, false);
     }
     
     // H SCROLL

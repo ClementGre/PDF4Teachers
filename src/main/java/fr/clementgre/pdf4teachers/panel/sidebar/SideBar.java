@@ -30,10 +30,10 @@ public class SideBar extends TabPane {
     public static final int MAX_WIDTH = 450;
     public static final int TAB_WIDTH = 50; // Estimated
     
-    public static final List<String> DEFAULT_LEFT_TABS = List.of("files", "text", "grades", "skills", "paint");
+    public static final List<String> DEFAULT_LEFT_TABS = List.of("files", "text", "grades", "skills", "paint", "toc");
     public static final List<String> DEFAULT_RIGHT_TABS = Collections.emptyList();
     
-    private static final String STYLE = "-fx-tab-max-width: 22px;";
+    private static final String STYLE = "-fx-tab-max-width: 13px;";
     public static Tab draggingTab;
     private final boolean left;
     private boolean loaded;
