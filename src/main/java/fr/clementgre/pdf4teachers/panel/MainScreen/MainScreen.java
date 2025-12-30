@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -55,44 +55,10 @@ import static fr.clementgre.pdf4teachers.document.render.display.PageRenderer.PA
 
 public class MainScreen extends Pane {
     
-    public Pane pane = new Pane();
-    public ZoomOperator zoomOperator;
-    
-    public double paneMouseX;
-    public double paneMouseY;
-    
-    public double mouseX;
-    public double mouseY;
-    
-    private final IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
-    private final ObjectProperty<Element> selected = new SimpleObjectProperty<>();
-    private final ObjectProperty<GraphicElement> toPlace = new SimpleObjectProperty<>();
-    
-    public Document document;
-    public String failedEditFile = "";
-    
-    private final Label info = new Label();
-    private final Hyperlink infoLink = new Hyperlink();
-    
-    public final DropShadow notSelectedShadow = new DropShadow();
-    public final DropShadow selectedShadow = new DropShadow();
-    
-    public static class Status {
-        public static final int CLOSED = 0;
-        public static final int OPEN = 1;
-        public static final int ERROR = 2;
-        public static final int ERROR_EDITION = 3;
-    }
-    
+    private static final int ARROW_NAV_FACTOR = 300;
+    public static boolean isRotating;
     private static int dragNScrollFactorVertical;
     private static int dragNScrollFactorHorizontal;
-    double dragStartX;
-    double dragStartY;
-    
-    private final BooleanProperty isGridView = new SimpleBooleanProperty(false);
-    private final BooleanProperty isMultiPagesMode = new SimpleBooleanProperty(false);
-    private final BooleanProperty isEditPagesMode = new SimpleBooleanProperty(false);
-    
     private static final Thread dragNScrollThread = new Thread(() -> {
         while(true){
             if(dragNScrollFactorVertical != 0){
@@ -132,7 +98,32 @@ public class MainScreen extends Pane {
         }
         
     }, "DragNScroll");
-    
+    public final DropShadow notSelectedShadow = new DropShadow();
+    public final DropShadow selectedShadow = new DropShadow();
+    private final IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
+    private final ObjectProperty<Element> selected = new SimpleObjectProperty<>();
+    private final ObjectProperty<GraphicElement> toPlace = new SimpleObjectProperty<>();
+    private final Label info = new Label();
+    private final Hyperlink infoLink = new Hyperlink();
+    private final BooleanProperty isGridView = new SimpleBooleanProperty(false);
+    private final BooleanProperty isMultiPagesMode = new SimpleBooleanProperty(false);
+    private final BooleanProperty isEditPagesMode = new SimpleBooleanProperty(false);
+    public Pane pane = new Pane();
+    public ZoomOperator zoomOperator;
+    public double paneMouseX;
+    public double paneMouseY;
+    public double mouseX;
+    public double mouseY;
+    public boolean mouseIn = false;
+    public Document document;
+    public String failedEditFile = "";
+    double dragStartX;
+    double dragStartY;
+    private long lastFinishedScrollingTime;
+    private boolean hasScrollStartEndEvents;
+    private long lastFinishedZoomingTime;
+    private boolean hasZoomStartEndEvents;
+    private long lastScaleChangedMs;
     public MainScreen(){
         setPrefWidth(Double.MAX_VALUE);
         setMaxWidth(Double.MAX_VALUE);
@@ -150,7 +141,6 @@ public class MainScreen extends Pane {
         setup();
         repaint();
     }
-    
     public void repaint(){
         if(status.get() != Status.OPEN){
             info.setVisible(true);
@@ -179,16 +169,6 @@ public class MainScreen extends Pane {
             infoLink.setVisible(false);
         }
     }
-    
-    private long lastFinishedScrollingTime;
-    private boolean hasScrollStartEndEvents;
-    private long lastFinishedZoomingTime;
-    private boolean hasZoomStartEndEvents;
-    public static boolean isRotating;
-    
-    private long lastScaleChangedMs;
-    
-    
     public void setup(){
         
         setBorder(Border.EMPTY);
@@ -503,10 +483,20 @@ public class MainScreen extends Pane {
         // Start the Drag and Scroll Thread
         if(!dragNScrollThread.isAlive()) dragNScrollThread.start();
         
+        
+        pane.setOnMouseEntered(e -> {
+            mouseIn = true;
+            if(e.isShortcutDown()) updateHyperlinksVisibility(true);
+        });
+        pane.setOnMouseExited(e -> {
+            mouseIn = false;
+            updateHyperlinksVisibility(false);
+        });
+        
     }
     
     private void updateTheme(){
-        if(Main.settings.darkTheme.getValue()){ // Dark theme
+        if(Boolean.TRUE.equals(Main.settings.darkTheme.getValue())){ // Dark theme
             setStyle("-fx-padding: 0; -fx-background-color: #3a3a3e;");
             pane.setStyle("-fx-background-color: #3a3a3e;");
         }else{ // Light theme
@@ -621,7 +611,8 @@ public class MainScreen extends Pane {
     
     /**
      * Adds files in the files tab and may open the first file as the current document.
-     * @param toOpenFiles List of files to add in the files tab.
+     *
+     * @param toOpenFiles  List of files to add in the files tab.
      * @param openDocument If true, and the size of the list is 1, the first file will be opened as the current document.
      * @return true if the first file of the list has been opened as the current document.
      */
@@ -740,8 +731,6 @@ public class MainScreen extends Pane {
             zoomOperator.scrollToPage(bottomPage);
         }
     }
-    
-    private static final int ARROW_NAV_FACTOR = 300;
     public void navigateUp(){
         if(hasDocument(false)){
             zoomOperator.scrollUp(ARROW_NAV_FACTOR, false, false);
@@ -772,21 +761,21 @@ public class MainScreen extends Pane {
             zoomOperator.zoomFactor(0.6, false, false);
         }
     }
-    
-    
     public Element getSelected(){
         return selected.get();
-    }
-    public ObjectProperty<Element> selectedProperty(){
-        return selected;
     }
     public void setSelected(Element selected){
         //Log.d("select " + (selected == null ? "null " : selected.getClass().getSimpleName()));
         this.selected.set(selected);
     }
-    
+    public ObjectProperty<Element> selectedProperty(){
+        return selected;
+    }
     public GraphicElement getToPlace(){
         return toPlace.get();
+    }
+    public void setToPlace(GraphicElement toPlace){
+        this.toPlace.set(toPlace);
     }
     public boolean hasToPlace(){
         return toPlace.get() != null;
@@ -794,17 +783,12 @@ public class MainScreen extends Pane {
     public ObjectProperty<GraphicElement> toPlaceProperty(){
         return toPlace;
     }
-    public void setToPlace(GraphicElement toPlace){
-        this.toPlace.set(toPlace);
-    }
-    
     public IntegerProperty statusProperty(){
         return status;
     }
     public int getStatus(){
         return this.status.get();
     }
-    
     public double getZoomFactor(){
         return pane.getScaleX();
     }
@@ -817,14 +801,12 @@ public class MainScreen extends Pane {
     public DoubleProperty zoomProperty(){
         return pane.scaleXProperty();
     }
-    
     public int getPageWidth(){
         return PAGE_WIDTH;
     }
     public void addPage(PageRenderer page){
         pane.getChildren().add(page);
     }
-    
     // For classic column view
     public void updateSize(int totalHeight){
         pane.setPrefHeight(totalHeight);
@@ -837,7 +819,6 @@ public class MainScreen extends Pane {
             pane.setPrefHeight(totalHeight);
         }
     }
-    
     public boolean pasteText(String text){
         if(hasDocument(false)){
             MainWindow.textTab.newBtn.fire();
@@ -849,19 +830,16 @@ public class MainScreen extends Pane {
         }
         return false;
     }
-    
     public UndoEngine getUndoEngine(){
         if(hasDocument(false) && document.hasUndoEngine()) return document.getUndoEngine();
         return null;
     }
-    
     public <T> boolean isNextUndoActionProperty(Property<T> property){
         if(getUndoEngine() != null && getUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
             return action.getObservableValue() == property;
         }
         return false;
     }
-    
     public void registerNewAction(UndoAction action){
         if(action.getUndoType() == UType.NO_UNDO) return;
         if(getUndoEngine() != null){
@@ -874,7 +852,6 @@ public class MainScreen extends Pane {
     public void redo(){
         if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().redo();
     }
-    
     // True if isEditPageMode is true OR of isMultiPagesMode is true
     public boolean isGridView(){
         return isGridView.get();
@@ -882,7 +859,6 @@ public class MainScreen extends Pane {
     public BooleanProperty isGridViewProperty(){
         return isGridView;
     }
-    
     public boolean isEditPagesMode(){
         return isEditPagesMode.get();
     }
@@ -892,7 +868,6 @@ public class MainScreen extends Pane {
     public void setIsEditPagesMode(boolean isEditPagesMode){
         this.isEditPagesMode.set(isEditPagesMode);
     }
-    
     public boolean isMultiPagesMode(){
         return isMultiPagesMode.get();
     }
@@ -902,7 +877,6 @@ public class MainScreen extends Pane {
     public void setIsMultiPagesMode(boolean isMultiPagesMode){
         this.isMultiPagesMode.set(isMultiPagesMode);
     }
-    
     public double getAvailableWidthInPaneContext(){
         return zoomOperator.getMainScreenWidth() / zoomOperator.getPaneScale();
     }
@@ -914,5 +888,19 @@ public class MainScreen extends Pane {
         if(!isGridView()) return 1;
         int rest = document.getPagesNumber() % getGridModePagesPerRow();
         return rest == 0 ? getGridModePagesPerRow() : rest;
+    }
+    public void updateHyperlinksVisibility(boolean shortcutDown){
+        if(hasDocument(false)){
+            Log.t("updateHyperlinksVisibility: shortcutDown = " + shortcutDown + " mouseIn = " + mouseIn);
+            if(shortcutDown && mouseIn) document.showHyperlinks();
+            else document.hideHyperlinks();
+        }
+    }
+    
+    public static class Status {
+        public static final int CLOSED = 0;
+        public static final int OPEN = 1;
+        public static final int ERROR = 2;
+        public static final int ERROR_EDITION = 3;
     }
 }

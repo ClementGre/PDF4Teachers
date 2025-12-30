@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -37,20 +37,21 @@ public class Log {
         String className = Thread.currentThread().getStackTrace()[2].getClassName() + " " + Thread.currentThread().getStackTrace()[2].getMethodName();
         l(LogLevel.ERROR, className, s);
         LogsManager.printErr(e);
-    
-        Platform.runLater(() -> MainWindow.footerBar.showToast(
-                Color.color(225/255f, 63/255f, 63/255f), Color.WHITE, FooterBar.ToastDuration.LONG,
-                "ERROR: " + StringUtils.removeBeforeLastOccurrence(className, ".") + "() " + s + " " + getConsoleMessage()));
+        
+        notifyOnly(StringUtils.removeBeforeLastOccurrence(className, ".") + "() " + s + " " + getConsoleMessage());
     }
     // Error with a notification
     public static void eNotified(Throwable e){
         String className = Thread.currentThread().getStackTrace()[2].getClassName() + " " + Thread.currentThread().getStackTrace()[2].getMethodName();
         l(LogLevel.ERROR, className, e.getMessage());
         LogsManager.printErr(e);
-    
+        
+        notifyOnly(StringUtils.removeBeforeLastOccurrence(className, ".") + "() " + e.getMessage() + " " + getConsoleMessage());
+    }
+    public static void notifyOnly(String s){
         Platform.runLater(() -> MainWindow.footerBar.showToast(
-                Color.color(225/255f, 63/255f, 63/255f), Color.WHITE, FooterBar.ToastDuration.LONG,
-                "ERROR: " + StringUtils.removeBeforeLastOccurrence(className, ".") + "() " + e.getMessage() + " " + getConsoleMessage()));
+                Color.color(225 / 255f, 63 / 255f, 63 / 255f), Color.WHITE, FooterBar.ToastDuration.LONG,
+                "ERROR: " + s));
     }
     private static String getConsoleMessage(){
         return PlatformUtils.isMac() ? "(Cmd+Opt+C to open the console)" : "(Ctrl+Alt+C to open the console)";
@@ -60,7 +61,7 @@ public class Log {
     public static void eAlerted(Throwable e){
         l(LogLevel.ERROR, Thread.currentThread().getStackTrace()[2].getClassName() + " " + Thread.currentThread().getStackTrace()[2].getMethodName(), e.getMessage());
         LogsManager.printErr(e);
-    
+        
         Platform.runLater(() -> ErrorAlert.showErrorAlert(e));
     }
     

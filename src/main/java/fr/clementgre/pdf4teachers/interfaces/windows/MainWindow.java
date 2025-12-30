@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -104,23 +104,6 @@ public class MainWindow extends Stage {
         
         setOnCloseRequest(e -> {
             if(!requestCloseApp()) e.consume();
-        });
-        
-        // Setup hyperlink overlay toggle on Ctrl/Cmd key press
-        scene.setOnKeyPressed(e -> {
-            if(e.isControlDown() || e.isMetaDown()) {
-                if(mainScreen != null && mainScreen.hasDocument(false)) {
-                    mainScreen.document.showHyperlinks();
-                }
-            }
-        });
-        
-        scene.setOnKeyReleased(e -> {
-            if(!e.isControlDown() && !e.isMetaDown()) {
-                if(mainScreen != null && mainScreen.hasDocument(false)) {
-                    mainScreen.document.hideHyperlinks();
-                }
-            }
         });
     }
     

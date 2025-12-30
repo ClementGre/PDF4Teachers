@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023. Clément Grennerat
+ * Copyright (c) 2019-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -47,7 +47,7 @@ public class KeyboardShortcuts {
     // List of menu bar shortcuts used to detect conflicts
     private final ArrayList<ShortcutRecord> menuBarShortcuts = new ArrayList<>();
     
-    public KeyboardShortcuts(Scene main){
+    public KeyboardShortcuts(Scene scene){
         
         /*******************************/
         /* Graphics elements shortcuts */
@@ -282,7 +282,11 @@ public class KeyboardShortcuts {
         /*********** EVENTS ***********/
         /******************************/
         
-        main.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if(e.isShortcutDown()){
+                MainWindow.mainScreen.updateHyperlinksVisibility(true);
+            }
+            
             Optional<ShortcutRecord> first = shortcuts.stream()
                     .filter(entry -> entry.getCombination().match(e))
                     .filter(entry -> {
@@ -302,9 +306,13 @@ public class KeyboardShortcuts {
                 }
             }
         });
+        scene.addEventFilter(KeyEvent.KEY_RELEASED, e -> {
+            if(!e.isShortcutDown()){
+                MainWindow.mainScreen.updateHyperlinksVisibility(false);
+            }
+        });
         
-        main.setOnKeyPressed(this::processLazyShortcuts);
-        
+        scene.setOnKeyPressed(this::processLazyShortcuts);
     }
     public void processLazyShortcuts(KeyEvent e){
         Optional<ShortcutRecord> first = lazyShortcuts.stream()

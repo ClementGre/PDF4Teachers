@@ -8,7 +8,6 @@ package fr.clementgre.pdf4teachers.panel.sidebar.toc;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.geometry.Insets;
@@ -104,7 +103,6 @@ public class TocTab extends SideTab {
                 int pageNumber = document.getPages().indexOf(page);
                 int pageY = 0;
                 if(current.getDestination() instanceof PDPageXYZDestination destination){
-                    Log.t("Found y value " + destination.getTop() + " for outline item " + title);
                     pageY = destination.getTop();
                 }
                 
@@ -140,8 +138,8 @@ public class TocTab extends SideTab {
      */
     private void navigateToPageAndY(int pageNumber, int pageY){
         if(!MainWindow.mainScreen.hasDocument(false)) return;
-        
         PageRenderer page = MainWindow.mainScreen.document.getPage(pageNumber);
+        if(page == null) return;
         MainWindow.mainScreen.zoomOperator.scrollToPageAndY(page, pageY);
     }
     

@@ -179,6 +179,9 @@ public class PDFPagesEditor {
         
         // update current page
         document.setCurrentPage(index);
+        
+        // Update toc
+        MainWindow.tocTab.loadTableOfContents();
     }
     public void deletePage(PageRenderer page){
         
@@ -190,6 +193,9 @@ public class PDFPagesEditor {
             
             deletePageUtil(page);
             restoreSelectedPages(savedSelectedPages);
+            
+            // Update toc
+            MainWindow.tocTab.loadTableOfContents();
         }
     }
     public void deletePageUtil(PageRenderer page){
@@ -516,6 +522,9 @@ public class PDFPagesEditor {
             
             // add pages
             for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
+            
+            // Update toc
+            MainWindow.tocTab.loadTableOfContents();
         }
         edited = true;
     }

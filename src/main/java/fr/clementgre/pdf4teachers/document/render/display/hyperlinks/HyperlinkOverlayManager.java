@@ -5,10 +5,10 @@
 
 package fr.clementgre.pdf4teachers.document.render.display.hyperlinks;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
-import javafx.application.HostServices;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Background;
@@ -25,6 +25,7 @@ import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -90,6 +91,7 @@ public class HyperlinkOverlayManager {
         Hyperlink.Type type = Hyperlink.Type.UNKNOWN;
         String destination = null;
         Integer targetPage = null;
+        Integer targetY = null;
         
         PDAction action = linkAnnotation.getAction();
         PDDestination dest = linkAnnotation.getDestination();
@@ -109,11 +111,17 @@ public class HyperlinkOverlayManager {
             type = Hyperlink.Type.GOTO;
             if(gotoAction.getDestination() instanceof PDPageDestination gotoActionDestination){
                 targetPage = gotoActionDestination.retrievePageNumber();
+                if(gotoActionDestination instanceof PDPageXYZDestination xyzDestination){
+                    targetY = xyzDestination.getTop();
+                }
             }
         }else if(dest instanceof PDPageDestination pageDestination){
             // Check destination if no action
             type = Hyperlink.Type.GOTO;
             targetPage = pageDestination.retrievePageNumber();
+            if(pageDestination instanceof PDPageXYZDestination xyzDestination){
+                targetY = xyzDestination.getTop();
+            }
         }
         
         if (type == Hyperlink.Type.UNKNOWN) {
@@ -130,16 +138,18 @@ public class HyperlinkOverlayManager {
         double width = rect.getWidth();
         double height = rect.getHeight();
         
-        return new Hyperlink(type, destination, targetPage, x, y, width, height);
+        return new Hyperlink(type, destination, targetPage, targetY, x, y, width, height);
     }
     
     /**
      * Shows all hyperlink overlays
      */
     public void show() {
+        if(visible) return;
         visible = true;
         for (HyperlinkOverlay overlay : overlays) {
             overlay.setVisible(true);
+            overlay.toFront();
         }
     }
     
@@ -147,6 +157,7 @@ public class HyperlinkOverlayManager {
      * Hides all hyperlink overlays
      */
     public void hide() {
+        if(!visible) return;
         visible = false;
         for (HyperlinkOverlay overlay : overlays) {
             overlay.setVisible(false);
@@ -161,6 +172,7 @@ public class HyperlinkOverlayManager {
             pageRenderer.getChildren().remove(overlay);
         }
         overlays.clear();
+        visible = false;
     }
     
     /**
@@ -179,16 +191,17 @@ public class HyperlinkOverlayManager {
             updatePosition();
         }
         
+        private static final String STYLE = "-fx-border-color: rgba(0, 120, 215, 0.5); -fx-border-radius: 2px; ";
         private void setupVisuals() {
             // Semi-transparent blue overlay
             setBackground(new Background(new BackgroundFill(
-                    Color.rgb(0, 120, 215, 0.2),
+                    Color.rgb(0, 120, 215, 0.1),
                     new CornerRadii(2),
                     Insets.EMPTY
             )));
             
             // Border
-            setStyle("-fx-border-color: rgba(0, 120, 215, 0.5); -fx-border-width: 1px; -fx-border-radius: 2px;");
+            setStyle(STYLE + "-fx-border-width: 0px;");
             
             setCursor(Cursor.HAND);
             setMouseTransparent(false);
@@ -202,55 +215,48 @@ public class HyperlinkOverlayManager {
             
             setOnMouseEntered(event -> {
                 setBackground(new Background(new BackgroundFill(
-                        Color.rgb(0, 120, 215, 0.3),
-                        new CornerRadii(2),
-                        Insets.EMPTY
-                )));
-            });
-            
-            setOnMouseExited(event -> {
-                setBackground(new Background(new BackgroundFill(
                         Color.rgb(0, 120, 215, 0.2),
                         new CornerRadii(2),
                         Insets.EMPTY
                 )));
+                setStyle(STYLE + "-fx-border-width: 1px;");
+            });
+            
+            setOnMouseExited(event -> {
+                setBackground(new Background(new BackgroundFill(
+                        Color.rgb(0, 120, 215, 0.1),
+                        new CornerRadii(2),
+                        Insets.EMPTY
+                )));
+                setStyle(STYLE + "-fx-border-width: 0px;");
             });
         }
         
         private void handleClick() {
-            switch (hyperlink.getType()) {
+            switch(hyperlink.type()){
                 case URL, MAILTO:
-                    if (hyperlink.getDestination() != null) {
+                    if(hyperlink.destination() != null){
                         try {
-                            HostServices hostServices = fr.clementgre.pdf4teachers.Main.hostServices;
-                            if (hostServices != null) {
-                                hostServices.showDocument(hyperlink.getDestination());
+                            if(Main.hostServices != null){
+                                Main.hostServices.showDocument(hyperlink.destination());
+                                MainWindow.mainScreen.updateHyperlinksVisibility(false);
                             }
                         } catch (Exception e) {
-                            Log.eNotified(e, "Error opening link: " + hyperlink.getDestination());
+                            Log.eNotified(e, "Error opening link: " + hyperlink.destination());
                         }
                     }
                     break;
                 case GOTO:
-                    if (hyperlink.getTargetPage() != null) {
-                        navigateToPage(hyperlink.getTargetPage());
+                    if(hyperlink.targetPage() != null){
+                        if(!MainWindow.mainScreen.hasDocument(false)) return;
+                        PageRenderer page = MainWindow.mainScreen.document.getPage(hyperlink.targetPage());
+                        if(page == null) return;
+                        MainWindow.mainScreen.zoomOperator.scrollToPageAndY(page, hyperlink.targetY());
                     }
                     break;
-            }
-        }
-        
-        private void navigateToPage(int pageNumber) {
-            if (!MainWindow.mainScreen.hasDocument(false)) return;
-            
-            if (pageNumber >= 0 && pageNumber < MainWindow.mainScreen.document.getPagesNumber()) {
-                // Scroll to the target page
-                double targetY = MainWindow.mainScreen.document.getPage(pageNumber).getTranslateY();
-                double paneHeight = MainWindow.mainScreen.pane.getHeight();
-                if (paneHeight > 0) {
-                    MainWindow.mainScreen.zoomOperator.vScrollBar.setValue(
-                            targetY / paneHeight
-                    );
-                }
+                default:
+                    Log.notifyOnly("Invalid link type.");
+                    break;
             }
         }
         
@@ -277,10 +283,10 @@ public class HyperlinkOverlayManager {
                 double scaleX = pageRenderer.getWidth() / pageWidth;
                 double scaleY = pageRenderer.getHeight() / pageHeight;
                 
-                double x = hyperlink.getX() * scaleX;
-                double y = hyperlink.getY() * scaleY;
-                double width = hyperlink.getWidth() * scaleX;
-                double height = hyperlink.getHeight() * scaleY;
+                double x = hyperlink.x() * scaleX;
+                double y = hyperlink.y() * scaleY;
+                double width = hyperlink.width() * scaleX;
+                double height = hyperlink.height() * scaleY;
                 
                 setLayoutX(x);
                 setLayoutY(y);
