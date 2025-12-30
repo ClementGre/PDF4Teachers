@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. Clément Grennerat
+ * Copyright (c) 2021-2025. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -329,7 +329,10 @@ public class UserData {
     
                     boolean hasOpenedParamDoc = MainWindow.mainScreen.openFiles(LockManager.getToOpenFiles(Main.params), !Main.window.doOpenDocumentation); // Params
                     if(Main.window.doOpenDocumentation && !hasOpenedParamDoc){ // Documentation
-                        Platform.runLater(() -> MainWindow.mainScreen.openFile(TR.getDocFile(), true));
+                        Platform.runLater(() -> {
+                            MainWindow.mainScreen.openFile(TR.getDocFile(), true);
+                            MainWindow.tocTab.select();
+                        });
                         
                     }else if(new File(lastOpenedFile).exists() && !hasOpenedParamDoc){ // Last opened file
                         Platform.runLater(() -> MainWindow.mainScreen.openFile(new File(lastOpenedFile)));

@@ -480,7 +480,10 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         ////////// ABOUT / HELP //////////
         
-        help1LoadDoc.setOnAction((ActionEvent actionEvent) -> MainWindow.mainScreen.openFile(TR.getDocFile()));
+        help1LoadDoc.setOnAction((ActionEvent actionEvent) -> {
+            MainWindow.mainScreen.openFile(TR.getDocFile());
+            MainWindow.tocTab.select();
+        });
         help2GitHubIssue.setOnAction((ActionEvent actionEvent) -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new"));
         help3Twitter.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://x.com/PDF4Teachers"));
         help4Website.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pdf4teachers.org"));
