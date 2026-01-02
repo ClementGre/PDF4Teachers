@@ -204,7 +204,9 @@ jlink {
                 '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
                 '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls',
                 '--add-reads=PDF4Teachers.merged.module=org.apache.commons.logging',
-                '--add-exports=org.apache.commons.logging/org.apache.commons.logging=PDF4Teachers.merged.module'
+                '--add-reads=PDF4Teachers.master.merged.module=org.apache.commons.logging',
+                '--add-exports=org.apache.commons.logging/org.apache.commons.logging=PDF4Teachers.merged.module',
+                '--add-exports=org.apache.commons.logging/org.apache.commons.logging=PDF4Teachers.master.merged.module'
         ]
         if(os.macOsX){
             // The dock icon works only when app is in /Applications
