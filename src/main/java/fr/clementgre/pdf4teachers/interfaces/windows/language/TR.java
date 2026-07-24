@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2026. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -107,6 +107,9 @@ public class TR {
             case "fr" -> {return "fr_fr";}
             case "en" -> {return "en_us";}
             case "it" -> {return "it_it";}
+            case "es" -> {
+                return "es_pe";
+            }
         }
         return null;
     }
@@ -272,6 +275,9 @@ public class TR {
         
         Config.set(data, "it_it.version", 0);
         Config.set(data, "it_it.name", "Italiano Italia");
+        
+        Config.set(data, "es_pe.version", 0);
+        Config.set(data, "es_pe.name", "Español Perú");
         
         return data;
     }
