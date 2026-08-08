@@ -584,19 +584,22 @@ public class MainScreen extends Pane {
             
             repaint();
             isRotating = false; // Can sometimes be kept to true
-            
+
+            // Get the scroll value loaded from the edition file (not from scrollbar which may be unreliable)
+            double scrollValue = document.edition.getLoadedScrollValue();
+
             // Zoom #2. If had opened file, keep same zoom factor.
             if(!hadOpenedFile){
                 if(MainWindow.userData.editPagesMode) zoomOperator.overviewWidth(true);
                 else zoomOperator.fitWidth(true, false);
             }else zoomOperator.zoom(oldPaneScale, true);
-            
+
             // Scroll position
             if(MainWindow.userData.editPagesMode){
                 PlatformUtils.runLaterOnUIThread(500, () -> zoomOperator.updatePaneDimensions(0, 0.5));
             }else{
-                double scrollValue = zoomOperator.vScrollBar.getValue(); // This value has been set when loading the edition
-                zoomOperator.updatePaneDimensions(scrollValue, 0.5);
+                final double finalScrollValue = scrollValue;
+                Platform.runLater(() -> zoomOperator.vScrollBar.setValue(finalScrollValue));
             }
             
             // Update menu bar

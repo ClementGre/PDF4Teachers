@@ -45,7 +45,10 @@ public class Edition{
     private final File file;
     private final File editFile;
     private static final BooleanProperty isSave = new SimpleBooleanProperty(true);
-    
+
+    // Stores the scroll value loaded from the edit file (used to restore scroll position)
+    private double loadedScrollValue = 0;
+
     public Document document;
     
     public Edition(File file, Document document){
@@ -68,7 +71,10 @@ public class Edition{
             boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
             
             Double lastScrollValue = config.getDoubleNull("lastScrollValue");
-            if(lastScrollValue != null && updateScrollValue) document.setCurrentScrollValue(lastScrollValue);
+            if(lastScrollValue != null){
+                loadedScrollValue = lastScrollValue;
+                if(updateScrollValue) document.setCurrentScrollValue(lastScrollValue);
+            }
     
             loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
                 VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
@@ -179,15 +185,17 @@ public class Edition{
         try{
             Config config = new Config(editFile);
             config.load();
-            
             config.base.put("lastScrollValue", document.getLastScrollValue());
-            
             config.save();
         }catch(Exception e){
             Log.eNotified(e);
         }
     }
-    
+
+    public double getLoadedScrollValue(){
+        return loadedScrollValue;
+    }
+
     private ArrayList<Object> getPageDataFromElements(ArrayList<Element> elements, Class<? extends Element> acceptedElements){
         ArrayList<Object> pageData = elements.stream()
                 .filter(acceptedElements::isInstance)
